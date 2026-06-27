@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>NoteTakeApp</title>
+    <meta name="image" content="https://www.svgrepo.com/show/192484/notepad-notebook.svg" />
     <meta name="theme-color" content="#1a1d21" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -20,1794 +21,1846 @@
     <meta name="twitter:title" content="NoteTakeApp" />
     <meta name="twitter:description" content="A simple note-taking app." />
     <meta name="twitter:image" content="https://www.svgrepo.com/show/192484/notepad-notebook.svg" />
-    <script>
-      (function() {
-        var currentUrl = window.location.href;
-        var currentDomain = window.location.hostname;
-        var ogUrlMeta = document.querySelector('meta[property="og:url"]');
-        if (ogUrlMeta) ogUrlMeta.setAttribute('content', currentUrl);
-        var twitterUrlMeta = document.querySelector('meta[name="twitter:url"]');
-        if (twitterUrlMeta) twitterUrlMeta.setAttribute('content', currentUrl);
-        var twitterDomainMeta = document.querySelector('meta[name="twitter:domain"]');
-        if (twitterDomainMeta) twitterDomainMeta.setAttribute('content', currentDomain);
-      })();
-    </script>
-    <link rel="icon" type="image/svg+xml" href="https://www.svgrepo.com/show/192484/notepad-notebook.svg" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link id="manifest-link" rel="manifest" href="">
     <style>
-      :root {
-        --header-height: 44px;
-        --accent-color: #0d6efd;
-        --accent-hover: #0b5ed7;
-        --bg-dark: #1a1d21;
-        --bg-card: #212529;
-        --bg-sidebar: #1e2127;
-        --border-color: #2d333b;
-        --text-muted: #8b949e;
-        --shadow-sm: 0 2px 4px rgba(0,0,0,0.3);
-        --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-        --transition-fast: 0.15s ease;
-        --transition-smooth: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+      :root[data-theme="light"] {
+        --md-sys-color-primary: #0061a4;
+        --md-sys-color-on-primary: #ffffff;
+        --md-sys-color-primary-container: #d1e4ff;
+        --md-sys-color-on-primary-container: #001d36;
+        --md-sys-color-secondary-container: #e8def8;
+        --md-sys-color-on-secondary-container: #1d192b;
+        --md-sys-color-surface: #fdfcff;
+        --md-sys-color-surface-container-low: #f3f3fa;
+        --md-sys-color-surface-container: #ededf4;
+        --md-sys-color-surface-container-high: #e7e8ee;
+        --md-sys-color-on-surface: #1a1c1e;
+        --md-sys-color-on-surface-variant: #43474e;
+        --md-sys-color-outline: #73777f;
+        --md-sys-color-outline-variant: #c3c7cf;
+        --md-sys-color-error: #ba1a1a;
+        --md-sys-color-shadow: rgba(0, 0, 0, 0.08);
+        --md-sys-color-scrim: rgba(0, 0, 0, 0.3);
       }
+
+      :root[data-theme="dark"] {
+        --md-sys-color-primary: #9ecaef;
+        --md-sys-color-on-primary: #003258;
+        --md-sys-color-primary-container: #00497d;
+        --md-sys-color-on-primary-container: #d1e4ff;
+        --md-sys-color-secondary-container: #4a4458;
+        --md-sys-color-on-secondary-container: #e8def8;
+        --md-sys-color-surface: #131314;
+        --md-sys-color-surface-container-low: #1c1f23;
+        --md-sys-color-surface-container: #202428;
+        --md-sys-color-surface-container-high: #2b2f33;
+        --md-sys-color-on-surface: #e2e2e6;
+        --md-sys-color-on-surface-variant: #c3c7cf;
+        --md-sys-color-outline: #8d9199;
+        --md-sys-color-outline-variant: #43474e;
+        --md-sys-color-error: #ffb4ab;
+        --md-sys-color-shadow: rgba(0, 0, 0, 0.4);
+        --md-sys-color-scrim: rgba(0, 0, 0, 0.6);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
       body {
-        background: var(--bg-dark);
-        font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+        background-color: var(--md-sys-color-surface);
+        color: var(--md-sys-color-on-surface);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        height: 100dvh;
+        overflow: hidden;
+        transition: background-color 0.3s, color 0.3s;
       }
-      .note-card {
+
+      ::-webkit-scrollbar { width: 8px; height: 8px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: var(--md-sys-color-outline-variant); border-radius: 10px; }
+      ::-webkit-scrollbar-thumb:hover { background: var(--md-sys-color-outline); }
+
+      .icon {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+        display: inline-block;
+      }
+
+      button {
+        font-family: inherit;
+      }
+
+      .app-container {
+        display: flex;
+        height: 100%;
+        width: 100%;
+      }
+
+      .sidebar {
+        width: 300px;
+        background-color: var(--md-sys-color-surface-container-low);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        z-index: 100;
+        border-right: 1px solid var(--md-sys-color-outline-variant);
+      }
+
+      .sidebar-header {
+        padding: 24px 16px 16px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .app-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--md-sys-color-primary);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        letter-spacing: -0.5px;
+      }
+
+      #closeSidebarBtn {
+        display: none;
+      }
+
+      .drawer-list {
+        list-style: none;
+        overflow-y: auto;
+        padding: 0 12px 24px 12px;
+        flex-grow: 1;
+      }
+
+      .drawer-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 16px;
+        border-radius: 100px;
         cursor: pointer;
-        transition: all var(--transition-fast);
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--md-sys-color-on-surface-variant);
+        transition: background-color 0.2s, color 0.2s, transform 0.1s;
+        margin-bottom: 4px;
+      }
+
+      .drawer-item:hover {
+        background-color: var(--md-sys-color-surface-container-high);
+        color: var(--md-sys-color-on-surface);
+      }
+
+      .drawer-item:active {
+        transform: scale(0.98);
+      }
+
+      .drawer-item.active {
+        background-color: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+      }
+
+      .drawer-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 16px 8px 16px;
+      }
+
+      .drawer-section-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--md-sys-color-outline);
+      }
+
+      .drawer-divider {
+        height: 1px;
+        background-color: var(--md-sys-color-outline-variant);
+        margin: 12px 16px;
+      }
+
+      .icon-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--md-sys-color-on-surface-variant);
+        transition: background-color 0.2s, color 0.2s, transform 0.2s;
+        flex-shrink: 0;
+      }
+
+      .icon-btn:hover {
+        background-color: var(--md-sys-color-surface-container-high);
+        color: var(--md-sys-color-on-surface);
+      }
+
+      .icon-btn:active {
+        transform: scale(0.9);
+      }
+
+      .fab {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        background-color: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+        border: none;
+        border-radius: 16px;
+        width: 64px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 12px var(--md-sys-color-shadow);
+        transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s;
+        z-index: 90;
+      }
+
+      .fab:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 8px 24px var(--md-sys-color-shadow);
+      }
+
+      .fab:active {
+        transform: translateY(0) scale(0.95);
+      }
+
+      .main-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+        background-color: var(--md-sys-color-surface);
+      }
+
+      .top-bar {
+        display: flex;
+        align-items: center;
+        padding: 12px 24px;
+        min-height: 72px;
+        gap: 16px;
+      }
+
+      .search-container {
+        flex-grow: 1;
+        max-width: 720px;
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .search-input {
+        width: 100%;
+        height: 48px;
+        padding: 0 20px 0 52px;
+        border-radius: 24px;
         border: 1px solid transparent;
+        background-color: var(--md-sys-color-surface-container);
+        color: var(--md-sys-color-on-surface);
+        font-size: 1rem;
+        outline: none;
+        transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
       }
+
+      .search-input:focus {
+        background-color: var(--md-sys-color-surface);
+        border-color: var(--md-sys-color-primary);
+        box-shadow: 0 0 0 3px rgba(0, 97, 164, 0.15);
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 20px;
+        color: var(--md-sys-color-on-surface-variant);
+        pointer-events: none;
+      }
+
+      .notes-view {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 24px;
+      }
+
+      .notes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+
+      .note-card {
+        background-color: var(--md-sys-color-surface-container-low);
+        border: 1px solid var(--md-sys-color-outline-variant);
+        border-radius: 16px;
+        padding: 20px;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        min-height: 200px;
+        transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s, border-color 0.2s;
+        overflow: hidden;
+      }
+
       .note-card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-        border-color: var(--border-color);
+        box-shadow: 0 8px 16px var(--md-sys-color-shadow);
+        border-color: var(--md-sys-color-outline);
+        transform: translateY(-4px);
+        background-color: var(--md-sys-color-surface-container);
       }
-      .note-header {
+
+      .note-card.selected {
+        background-color: var(--md-sys-color-primary-container);
+        border-color: var(--md-sys-color-primary);
+      }
+
+      .note-card-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        padding-right: 32px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: var(--md-sys-color-on-surface);
+      }
+
+      .note-card-body {
+        font-size: 0.95rem;
+        color: var(--md-sys-color-on-surface-variant);
+        line-height: 1.5;
+        flex-grow: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        word-break: break-word;
+      }
+
+      .note-card-footer {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-top: 16px;
+        font-size: 0.8rem;
+        color: var(--md-sys-color-outline);
       }
-      .action-btn {
-        background: none;
-        border: none;
-        color: inherit;
-        padding: 0.4rem;
-        border-radius: 6px;
-        transition: all var(--transition-fast);
-        opacity: 0.7;
-      }
-      .action-btn:hover {
-        opacity: 1;
-        background: rgba(255,255,255,0.1);
-        transform: scale(1.1);
-      }
-      .category-badge {
+
+      .note-chip {
+        background-color: var(--md-sys-color-surface-container-high);
+        color: var(--md-sys-color-on-surface-variant);
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-weight: 600;
         font-size: 0.75rem;
-        color: #fff;
-        border-radius: 20px;
-        padding: 0.25em 0.8em;
-        font-weight: 500;
-        letter-spacing: 0.3px;
       }
-      .text-truncate-badge {
-        max-width: 120px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        display: inline-block;
-        vertical-align: middle;
+
+      .card-star-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        z-index: 2;
       }
-      @media (max-width: 991.98px) {
-        #singleNoteSidebarColumn {
-          display: none !important;
-        }
+
+      .card-star-btn.starred {
+        color: #f5b041;
       }
-      @media (min-width: 992px) {
-        #singleNoteSidebarColumn {
-          display: flex !important;
-        }
-      }
-      #singleNoteDualCol {
-        min-height: 100dvh;
-        max-height: 100dvh;
-        width: 100vw;
-        overflow: hidden;
-        margin: 0;
-        padding: 0;
-      }
-      #singleNoteSidebarColumn {
-        border-right: 1px solid var(--border-color);
-        min-width: 350px;
-        max-width: 400px;
-        height: 100dvh;
-        display: flex;
-        flex-direction: column;
-      }
-      #singleNoteSidebarColumn .note-card {
-        margin-bottom: 0.75rem;
-        border-left: 3px solid transparent;
-        border-radius: 12px;
-        background: var(--bg-card);
-      }
-      #singleNoteSidebarColumn .note-card.active {
-        border-left: 3px solid var(--accent-color);
-        background: linear-gradient(90deg, rgba(13,110,253,0.1) 0%, var(--bg-card) 100%);
-        box-shadow: 0 0 0 1px rgba(13,110,253,0.3);
-      }
-      #singleNoteMainColumn {
-        flex: 1;
-        min-width: 0;
-        background: var(--bg-dark);
-        display: flex;
-        flex-direction: column;
-        height: 100dvh;
-        overflow: hidden;
-        position: relative;
-      }
-      #singleNoteMainNavbar {
-        position: sticky;
+
+      .editor-overlay {
+        position: fixed;
         top: 0;
         left: 0;
-        right: 0;
-        z-index: 10;
-        background: rgba(30, 33, 39, 0.95);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid var(--border-color);
-        min-height: var(--header-height);
-        height: var(--header-height);
-        box-sizing: border-box;
-        padding: 0 1.5rem;
+        width: 100%;
+        height: 100dvh;
+        background-color: var(--md-sys-color-surface);
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        transform: translateY(100%);
+        transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
       }
-      @media (max-width: 767px) {
-        .search-sm {
-          max-width: 180px;
-        }
+
+      .editor-overlay.active {
+        transform: translateY(0);
       }
-      @media (min-width: 768px) {
-        .search-sm {
-          min-width: 500px;
-        }
+
+      .editor-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 24px;
+        border-bottom: 1px solid var(--md-sys-color-surface-container-high);
+        background-color: var(--md-sys-color-surface);
+        flex-shrink: 0;
       }
-      #noteContent {
+
+      .editor-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .editor-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px 32px;
+        overflow: hidden;
+      }
+
+      .editor-header-meta {
+        flex-shrink: 0;
+        margin-bottom: 24px;
+      }
+
+      .editor-title {
+        font-size: 2.25rem;
+        font-weight: 700;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: var(--md-sys-color-on-surface);
+        width: 100%;
+        margin-bottom: 16px;
+        letter-spacing: -0.5px;
+      }
+
+      .editor-category-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.9rem;
+        color: var(--md-sys-color-outline);
+      }
+
+      .editor-category-row select {
+        background-color: var(--md-sys-color-surface-container-high);
+        color: var(--md-sys-color-on-surface);
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 500;
+        outline: none;
+        cursor: pointer;
+      }
+
+      .editor-content {
+        flex: 1;
         width: 100%;
         border: none;
         outline: none;
-        background: var(--bg-dark);
-        color: #e6edf3;
-        resize: none;
-        padding: 2.5rem 3rem;
-        font-size: 1rem;
-        line-height: 1.7;
-        flex: 1 1 auto;
-        min-height: 0;
-        overflow-y: auto;
-        box-sizing: border-box;
-        height: calc(100dvh - var(--header-height));
-        max-height: calc(100dvh - var(--header-height));
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
-      }
-      #noteContent:focus {
-        background: var(--bg-dark);
-      }
-      mark {
-        background: transparent !important;
-        color: inherit !important;
-        padding: 0;
-        border-radius: 0;
-      }
-      mark.current-match {
-        background: #ff9800 !important;
-        color: #fff !important;
-        padding: 2px 4px;
-        border-radius: 4px;
-        font-weight: 600;
-        box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
-      }
-      #singleNoteSidebarColumn::-webkit-scrollbar,
-      #sidebarContentWrapper::-webkit-scrollbar {
-        width: 6px;
-      }
-      #singleNoteSidebarColumn::-webkit-scrollbar-track,
-      #sidebarContentWrapper::-webkit-scrollbar-track {
         background: transparent;
+        color: var(--md-sys-color-on-surface);
+        font-size: 1.15rem;
+        line-height: 1.7;
+        resize: none;
+        font-family: inherit;
+        overflow-y: auto;
+        padding-bottom: 40px;
       }
-      #singleNoteSidebarColumn::-webkit-scrollbar-thumb,
-      #sidebarContentWrapper::-webkit-scrollbar-thumb {
-        background: var(--border-color);
-        border-radius: 3px;
+      
+      .editor-content::placeholder {
+        color: var(--md-sys-color-outline-variant);
       }
-      #singleNoteSidebarColumn::-webkit-scrollbar-thumb:hover,
-      #sidebarContentWrapper::-webkit-scrollbar-thumb:hover {
-        background: #495057;
-      }
-      #wordCounter {
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        font-size: 13px;
-        font-weight: 600;
-        z-index: 1055;
-        border-radius: 12px 0 0 0;
-        padding: 0.5em 1.5em;
-        user-select: none;
-        pointer-events: none;
-        background: rgba(13, 110, 253, 0.9);
-        color: white;
-        backdrop-filter: blur(4px);
-      }
-      .single-note-card-actions {
-        position: absolute;
-        top: 0.75rem;
-        right: 0.75rem;
-        z-index: 2;
+
+      .editor-footer {
+        flex-shrink: 0;
+        padding: 12px 32px;
+        border-top: 1px solid var(--md-sys-color-surface-container-high);
         display: flex;
-        gap: 0.25rem;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: var(--md-sys-color-outline);
+        background-color: var(--md-sys-color-surface);
       }
-      .single-note-card-content {
-        padding-right: 2.5rem;
-      }
-      .dropdown-item-category {
-        display: flex;
-        align-items: center;
-        gap: 0.5em;
-      }
-      .nav-tabs {
-        flex-wrap: wrap;
-        gap: 0.3rem;
-        margin-top: 0.5rem !important;
-        margin-bottom: 0.5rem !important;
-        padding: 0.5rem !important;
-        background: var(--bg-card) !important;
-        border-radius: 16px !important;
-      }
-      .nav-tabs .nav-item.flex-grow-1 {
-        min-width: 500px;
-      }
-      .search-sm {
-        width: 100%;
-      }
-      .categories-sort-row {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 0.50rem;
-        align-items: center;
-        margin-bottom: 1rem !important;
-      }
-      .categories-sort-row .form-select {
-        min-width: 180px;
-        border: 0;
-        border-radius: 10px;
-        padding: 0.6rem 2.5rem 0.6rem 1rem;
-        font-weight: 500;
-        width: 100%;
-      }
-      .categories-sort-row .sort-select {
-        min-width: 120px;
-        width: auto;
-        margin-left: 0;
-      }
-      @media (max-width: 480px) {
-        .categories-sort-row {
-          flex-direction: column;
-          align-items: stretch;
-        }
-        .categories-sort-row .form-select {
-          width: 100% !important;
-          margin-left: 0 !important;
-        }
-      }
-      .copied-indicator {
+
+      .find-replace-panel {
         position: absolute;
-        top: 0.5rem;
-        right: 3.5rem;
-        z-index: 10;
-        background: #2bc48a;
-        color: #fff;
-        font-weight: bold;
-        border-radius: 8px;
-        padding: 0.3em 0.9em;
-        font-size: 0.85em;
-        opacity: 0;
-        transition: all var(--transition-fast);
-        pointer-events: none;
-        box-shadow: var(--shadow-md);
-        transform: translateY(-5px);
-      }
-      .copied-indicator.show {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      .pagination-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 12px;
-        margin: 24px 0 0 0;
-        user-select: none;
-      }
-      .pagination-btn {
-        border: none;
-        background: var(--bg-card);
-        color: #fff;
-        border-radius: 10px;
-        padding: 0.5em 1.2em;
-        font-size: 1em;
-        cursor: pointer;
-        transition: all var(--transition-fast);
-        font-weight: 500;
-      }
-      .pagination-btn:hover:not(:disabled) {
-        background: var(--accent-color);
-        border-color: var(--accent-color);
-        transform: translateY(-1px);
-      }
-      .pagination-btn:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-        background: #333;
-      }
-      .pagination-page {
-        font-weight: 700;
-        font-size: 1em;
-        color: var(--accent-color);
-        cursor: pointer;
-        padding: 0.5em 1em;
-        border-radius: 8px;
-        transition: background var(--transition-fast);
-      }
-      .pagination-page:hover {
-        background: rgba(13, 110, 253, 0.1);
-      }
-      .load-more-btn {
-        display: block;
-        width: 90%;
-        margin: 1em auto 1.5em auto;
-        border: none;
-        border-radius: 12px;
-        background: var(--bg-card);
-        color: #fff;
-        font-weight: 600;
-        font-size: 1em;
-        padding: 0.6em 0;
-        transition: all var(--transition-fast);
-        border: 1px solid var(--border-color);
-      }
-      .load-more-btn:hover:not(:disabled) {
-        background: var(--accent-color);
-        border-color: var(--accent-color);
-        transform: translateY(-2px);
-      }
-      #findBar {
-        position: absolute;
-        top: 60px;
-        right: 20px;
-        width: 300px;
-        max-width: calc(100vw - 40px);
-        background: rgba(44, 48, 52, 0.98);
-        border: 1px solid var(--border-color);
-        border-radius: 14px;
-        padding: 14px;
-        box-shadow: 0 12px 30px rgba(0,0,0,0.6);
-        z-index: 1060;
+        top: 80px;
+        right: 32px;
+        background-color: var(--md-sys-color-surface-container-high);
+        border-radius: 16px;
+        padding: 16px;
+        width: 360px;
+        box-shadow: 0 16px 32px var(--md-sys-color-shadow);
         display: none;
-        backdrop-filter: blur(12px);
+        flex-direction: column;
+        gap: 12px;
+        z-index: 250;
+        border: 1px solid var(--md-sys-color-outline-variant);
       }
-      #findBar .form-control,
-      #findBar .form-check {
-        font-size: 0.85rem;
+
+      .find-replace-panel.active {
+        display: flex;
+        animation: slideDown 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
       }
-      #findBar .form-control {
-        background: var(--bg-dark);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 0.4rem 0.8rem;
-        color: #fff;
+
+      @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
       }
-      #findBar .form-control:focus {
-        border-color: var(--accent-color);
-        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+
+      .find-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+        font-weight: 600;
+        color: var(--md-sys-color-on-surface);
       }
-      #findBar .btn-sm {
-        font-size: 0.75rem;
-        padding: 0.3rem 0.6rem;
-        border-radius: 6px;
-        font-weight: 500;
-      }
-      #findBar .d-flex {
-        gap: 6px;
-      }
-      #findBar .mb-3 {
-        margin-bottom: 0.8rem !important;
-      }
-      #findBar .form-check-input {
-        width: 0.9rem;
-        height: 0.9rem;
-        margin-top: 0.2rem;
-      }
-      #findBar .form-check-label {
-        font-size: 0.8rem;
-      }
-      #findBar .d-flex.justify-content-between .d-flex {
-        gap: 0.8rem;
-      }
-      @media (max-width: 480px) {
-        #findBar {
-          width: calc(100vw - 24px);
-          right: 12px;
-          left: 12px;
-        }
-        #findBar .d-flex {
-          flex-wrap: wrap;
-        }
-        #findBar .btn-sm {
-          flex: 1 0 auto;
-        }
-      }
-      .form-check-input:checked {
-        background-color: var(--accent-color);
-        border-color: var(--accent-color);
-      }
-      @media (max-width: 360px) {
-        .container {
-          padding-left: 10px;
-          padding-right: 10px;
-        }
-        .nav-tabs .nav-link {
-          padding: 0.4rem 0.8rem !important;
-        }
-        .card-body {
-          padding: 0.9rem;
-        }
-        .single-note-card-actions {
-          top: 0.5rem;
-          right: 0.5rem;
-        }
-        .single-note-card-actions .action-btn {
-          padding: 0.2rem;
-        }
-      }
-      .nav-link {
-        color: var(--text-muted) !important;
-        border-radius: 12px !important;
-        padding: 0.6rem 1.2rem !important;
-        transition: all var(--transition-fast) !important;
-        font-weight: 500;
-      }
-      .nav-link:hover {
-        color: #fff !important;
-        background: rgba(255,255,255,0.05);
-      }
-      .nav-link.active {
-        background: var(--accent-color) !important;
-        color: #fff !important;
-        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
-      }
-      .dropdown-menu {
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: 16px;
-        box-shadow: var(--shadow-md);
-        padding: 0.5rem;
-      }
-      .dropdown-item {
-        border-radius: 10px;
-        padding: 0.6rem 1rem;
-        font-weight: 500;
-        transition: all var(--transition-fast);
-      }
-      .dropdown-item:hover {
-        background: rgba(13, 110, 253, 0.1);
-        color: var(--accent-color);
-      }
-      .dropdown-item i {
-        margin-right: 0.5rem;
-      }
-      .card {
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: 16px;
-        transition: all var(--transition-fast);
-      }
-      .card:hover {
-        border-color: #495057;
-      }
-      .btn-secondary {
-        background: #495057;
-        border: none;
-        font-weight: 500;
-      }
-      .btn-danger {
-        background: #dc3545;
-        border: none;
-        font-weight: 500;
-      }
-      .btn-primary {
-        background: var(--accent-color);
-        border: none;
-        font-weight: 500;
-      }
-      .select-all-container {
+
+      .find-row {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        color: var(--text-muted);
-        font-weight: 500;
+        gap: 8px;
+        background-color: var(--md-sys-color-surface);
+        border-radius: 8px;
+        padding: 6px 12px;
+        border: 1px solid var(--md-sys-color-outline-variant);
       }
-      #selectedNotesActions {
-        background: var(--bg-card);
-        padding: 0.75rem 1rem;
-        border-radius: 16px;
-        margin-bottom: 1.5rem;
-      }
-      .fw-bold.mb-2 {
-        color: #fff;
-        font-size: 1.1rem;
-        margin-bottom: 1rem !important;
-        padding-left: 0.5rem;
-      }
-      .search-input {
-        background: rgba(0,0,0,0.2) !important;
-        border-radius: 12px !important;
-        color: #fff !important;
-        font-weight: 500;
-      }
-      .search-input:focus {
-        border-color: var(--accent-color) !important;
-        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25) !important;
-        background: var(--bg-dark) !important;
-      }
-      .search-input::placeholder {
-        color: var(--text-muted);
-      }
-      .container {
-        max-width: 900px;
-      }
-      #noteList {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-      @media (min-width: 768px) {
-        #noteList {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      @media (min-width: 992px) {
-        #noteList {
-          grid-template-columns: repeat(3, 1fr);
-        }
-        .container {
-          max-width: 1100px;
-        }
-      }
-      .card-body {
-        padding: 1.25rem;
-      }
-      small.fw-medium {
-        color: var(--text-muted);
-        font-size: 0.85rem;
-      }
-      .text-light-emphasis {
-        color: #c9d1d9 !important;
-        line-height: 1.6;
-      }
-      .mt-3.text-light-emphasis {
+
+      .find-row input {
+        flex-grow: 1;
+        min-width: 0;
+        border: none;
+        background: transparent;
+        color: var(--md-sys-color-on-surface);
+        outline: none;
+        padding: 6px 4px;
         font-size: 0.95rem;
       }
-      .mt-1 {
-        margin-top: 0.75rem !important;
+
+      .find-counter {
+        flex-shrink: 0;
+        font-size: 0.85rem;
+        color: var(--md-sys-color-outline);
+        min-width: 45px;
+        text-align: right;
       }
-      #noteCategorySelect {
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
+
+      .find-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 4px;
+      }
+
+      .btn-small {
+        background-color: var(--md-sys-color-surface);
+        border: 1px solid var(--md-sys-color-outline-variant);
+        color: var(--md-sys-color-on-surface);
+        padding: 8px 16px;
         border-radius: 8px;
-        color: #fff;
-        font-weight: 500;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        flex-grow: 1;
+        transition: all 0.2s;
       }
-      #noteDate {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        font-weight: 500;
+
+      .btn-small:hover {
+        background-color: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+        border-color: var(--md-sys-color-primary-container);
       }
-      .mx-2.d-none.d-md-block {
-        color: var(--border-color);
+
+      .modal-backdrop {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-color: var(--md-sys-color-scrim);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s;
+        z-index: 1000;
       }
-      .bi-chevron-left {
-        font-size: 1.2rem;
+
+      .modal-backdrop.active {
+        opacity: 1;
+        pointer-events: auto;
       }
-      .container.mt-4 {
-        margin-top: 1rem !important;
+
+      .modal-card {
+        background-color: var(--md-sys-color-surface-container);
+        border-radius: 28px;
+        padding: 28px;
+        width: 90%;
+        max-width: 420px;
+        transform: scale(0.9);
+        transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+        box-shadow: 0 24px 38px var(--md-sys-color-shadow);
+      }
+
+      .modal-backdrop.active .modal-card {
+        transform: scale(1);
+      }
+
+      .modal-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--md-sys-color-on-surface);
+      }
+
+      .modal-content {
+        margin-bottom: 28px;
+        color: var(--md-sys-color-on-surface-variant);
+        line-height: 1.5;
+      }
+
+      .modal-input {
+        width: 100%;
+        padding: 14px;
+        border-radius: 12px;
+        border: 2px solid var(--md-sys-color-outline-variant);
+        background-color: var(--md-sys-color-surface);
+        color: var(--md-sys-color-on-surface);
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      .modal-input:focus {
+        border-color: var(--md-sys-color-primary);
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+
+      .btn {
+        padding: 10px 24px;
+        border-radius: 100px;
+        border: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background-color 0.2s, opacity 0.2s;
+      }
+
+      .btn-text {
+        background: transparent;
+        color: var(--md-sys-color-primary);
+      }
+
+      .btn-text:hover {
+        background-color: var(--md-sys-color-surface-container-high);
+      }
+
+      .btn-filled {
+        background-color: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+      }
+
+      .btn-filled:hover {
+        opacity: 0.9;
+      }
+
+      .cat-manage-list {
+        max-height: 250px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .cat-manage-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--md-sys-color-surface);
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--md-sys-color-outline-variant);
+      }
+
+      .selection-bar {
+        position: fixed;
+        bottom: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--md-sys-color-secondary-container);
+        color: var(--md-sys-color-on-secondary-container);
+        padding: 12px 24px;
+        border-radius: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 12px 28px var(--md-sys-color-shadow);
+        transition: bottom 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        z-index: 150;
+      }
+      .selection-bar.active { bottom: 32px; }
+
+      .dropdown {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+      }
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: 8px;
+        background-color: var(--md-sys-color-surface-container-high);
+        border: 1px solid var(--md-sys-color-outline-variant);
+        border-radius: 12px;
+        min-width: 180px;
+        box-shadow: 0 8px 24px var(--md-sys-color-shadow);
+        display: none;
+        flex-direction: column;
+        padding: 8px 0;
+        z-index: 500;
+      }
+      .dropdown-menu.active {
+        display: flex;
+      }
+      .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 20px;
+        cursor: pointer;
+        color: var(--md-sys-color-on-surface);
+        font-size: 0.95rem;
+        transition: background-color 0.2s;
+      }
+      .dropdown-item:hover {
+        background-color: var(--md-sys-color-surface-container);
+      }
+
+      @media (max-width: 768px) {
+        .sidebar { position: absolute; left: -100%; height: 100%; box-shadow: 4px 0 16px var(--md-sys-color-shadow); }
+        .sidebar.open { left: 0; }
+        #closeSidebarBtn { display: inline-flex; }
+        .notes-grid { grid-template-columns: 1fr; }
+        .editor-body { padding: 20px 24px; }
+        .find-replace-panel { width: 90%; left: 5%; right: 5%; top: 70px; }
+      }
+
+      @media (min-width: 769px) {
+        #menuToggleBtn { display: none; }
+        #closeSidebarBtn { display: none !important; }
+        .search-container { max-width: 100%; }
       }
     </style>
   </head>
   <body>
-    <div class="w-100">
-      <div class="container mb-5 mt-4" id="allNotesView">
-        <ul class="nav nav-tabs border-0 my-3 bg-light-subtle p-3 rounded-4 align-items-center">
-          <li class="nav-item">
-            <input id="searchInput" class="form-control search-sm rounded search-input w-100 border-0" style="padding-top: 0.6em; padding-bottom: 0.6em;" type="text" placeholder="🔍 Search..." />
-          </li>
-          <li class="nav-item ms-auto">
-            <a class="nav-link active border-0 rounded" href="#" id="allNotesTab"><i class="bi bi-card-text"></i></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link border-0 rounded" href="#" id="favoritesTab"><i class="bi bi-star-fill"></i></a>
-          </li>
-          <div class="dropdown">
-            <button class="btn border-0 rounded nav-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">&#9776;</button>
-            <ul class="dropdown-menu rounded-4 shadow">
-              <li>
-                <button id="newNoteBtn" class="dropdown-item">
-                  <i class="bi bi-plus-circle"></i> New Note
-                </button>
-              </li>
-              <li>
-                <button id="importTxtBtn" class="dropdown-item">
-                  <i class="bi bi-file-earmark-text"></i> Upload TXT
-                </button>
-              </li>
-              <li>
-                <button id="addCategoryBtn" class="dropdown-item dropdown-item-category">
-                  <i class="bi bi-tag"></i> Add Category
-                </button>
-              </li>
-              <div class="px-3">
-                <div class="border border-2 my-2 opacity-25"></div>
-              </div>
-              <li>
-                <button id="exportBtn" class="dropdown-item">
-                  <i class="bi bi-download"></i> Export JSON
-                </button>
-              </li>
-              <li>
-                <button id="importBtn" class="dropdown-item">
-                  <i class="bi bi-upload"></i> Import JSON
-                </button>
-              </li>
-              <div class="px-3">
-                <div class="border border-2 my-2 opacity-25"></div>
-              </div>
-              <li>
-                <button id="installButton" class="dropdown-item d-none">
-                  <i class="bi bi-download me-1"></i> Install App
-                </button>
-              </li>
-              <li>
-                <a class="dropdown-item" href="https://github.com/HirotakaDango/note" target="_blank" rel="noopener noreferrer">
-                  <i class="bi bi-github"></i> GitHub Repo
-                </a>
-              </li>
-            </ul>
-          </div>
-        </ul>
-        <div class="categories-sort-row">
-          <select id="categoryFilter" class="form-select"></select>
-          <select id="sortSelect" class="form-select sort-select" style="width: auto;">
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
+    <svg style="display: none;">
+      <defs>
+        <g id="icon-menu"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></g>
+        <g id="icon-search"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></g>
+        <g id="icon-star"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></g>
+        <g id="icon-star-border"><path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"/></g>
+        <g id="icon-add"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></g>
+        <g id="icon-back"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></g>
+        <g id="icon-delete"><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></g>
+        <g id="icon-download"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></g>
+        <g id="icon-pencil"><path d="M14.06 9l.94.94L5.92 19H5v-.92L14.06 9m3.6-6c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 4.77L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z"/></g>
+        <g id="icon-fullscreen"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></g>
+        <g id="icon-close"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></g>
+        <g id="icon-upload"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></g>
+        <g id="icon-find"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></g>
+        <g id="icon-select"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></g>
+        <g id="icon-light"><path d="M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/></g>
+        <g id="icon-dark"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></g>
+        <g id="icon-folder"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></g>
+        <g id="icon-chevron-up"><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/></g>
+        <g id="icon-chevron-down"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></g>
+        <g id="icon-more"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></g>
+        <g id="icon-undo"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C20.32 11.15 16.76 8 12.5 8z"/></g>
+        <g id="icon-redo"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.26 0-7.82 3.15-9.47 7.22l2.37.78c1.05-3.19 4.06-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13.5 16H22V7l-3.6 3.6z"/></g>
+      </defs>
+    </svg>
+
+    <div class="app-container">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="app-title">NoteTakeApp</div>
+          <button class="icon-btn" id="closeSidebarBtn">
+            <svg class="icon" viewBox="0 0 24 24"><use href="#icon-close"></use></svg>
+          </button>
+        </div>
+
+        <div style="padding: 0 12px 16px 12px; position: relative; display: flex; align-items: center; width: 100%;">
+          <select id="sortSelect" style="width: 100%; padding: 8px 32px 8px 12px; border-radius: 8px; background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-surface); border: 1px solid var(--md-sys-color-outline-variant); outline: none; cursor: pointer; appearance: none; -webkit-appearance: none;">
+            <option value="newest">Sort by Newest</option>
+            <option value="oldest">Sort by Oldest</option>
           </select>
+          <svg class="icon" viewBox="0 0 24 24" style="position: absolute; right: 24px; pointer-events: none; margin-left: 1rem; width: 24px; height: 24px;"><use href="#icon-chevron-down"></use></svg>
         </div>
-        <div id="selectedNotesActions" class="my-3" style="display: none;">
-          <div class="d-flex gap-2 justify-content-between align-items-center">
-            <button id="downloadSelectedBtn" class="btn btn-outline-success border-0 rounded-3 fw-bold btn-sm" title="Download as ZIP">
-              Download
-            </button>
-            <button id="categorizeSelectedBtn" class="btn btn-outline-primary border-0 rounded-3 fw-bold btn-sm" title="Set Category">
-              Categorize
-            </button>
-            <button id="deleteSelectedBtn" class="btn btn-outline-danger border-0 rounded-3 fw-bold btn-sm">
-              Delete
+
+        <ul class="drawer-list">
+          <li class="drawer-item active" data-filter="all">
+            <svg class="icon" viewBox="0 0 24 24"><use href="#icon-folder"></use></svg> All Notes
+          </li>
+          <li class="drawer-item" data-filter="starred">
+            Starred
+          </li>
+
+          <div class="drawer-section-header">
+            <span class="drawer-section-title">Categories</span>
+            <button class="icon-btn" id="manageCatsBtn" title="Manage Categories" style="width:40px;height:40px;padding:4px;">
+              <svg class="icon" viewBox="0 0 24 24" style="width:28px;height:28px;"><use href="#icon-chevron-down"></use></svg>
             </button>
           </div>
-          <div class="select-all-container align-items-center m-2 mt-4">
-            <input type="checkbox" id="selectAllCheckbox" class="form-check-input my-auto">
-            <label for="selectAllCheckbox" id="selectedCount" style="cursor: pointer;">0 selected</label>
+          <div id="categoryList"></div>
+
+          <div class="drawer-divider"></div>
+          
+          <div class="drawer-section-header"><span class="drawer-section-title">Tools</span></div>
+          <li class="drawer-item" id="importTxtBtn">
+            <svg class="icon" viewBox="0 0 24 24"><use href="#icon-upload"></use></svg> Upload TXT
+          </li>
+          <li class="drawer-item" id="importJsonBtn">
+            <svg class="icon" viewBox="0 0 24 24"><use href="#icon-upload"></use></svg> Import JSON
+          </li>
+          <li class="drawer-item" id="exportJsonBtn">
+            <svg class="icon" viewBox="0 0 24 24"><use href="#icon-download"></use></svg> Export JSON
+          </li>
+          <li class="drawer-item" id="installAppBtn" style="display: flex;">
+            <svg class="icon" viewBox="0 0 24 24"><use href="#icon-download"></use></svg> Install App
+          </li>
+          <li class="drawer-item" id="themeToggleBtnSide">
+            <svg class="icon" viewBox="0 0 24 24" id="themeIconSide"><use href="#icon-light"></use></svg> Toggle Theme
+          </li>
+        </ul>
+      </aside>
+
+      <main class="main-content">
+        <header class="top-bar">
+          <button class="icon-btn" id="menuToggleBtn">
+            <svg class="icon" viewBox="0 0 24 24"><use href="#icon-menu"></use></svg>
+          </button>
+          <div class="search-container">
+            <svg class="icon search-icon" viewBox="0 0 24 24"><use href="#icon-search"></use></svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search notes..." />
           </div>
-        </div>
-        <div id="noteList"></div>
-        <div id="paginationContainer" class="pagination-container"></div>
-        <div class="text-center mt-5 mb-3 user-select-none">
-          <small class="text-muted fw-medium">
-            Made by <a href="https://github.com/HirotakaDango" target="_blank" class="text-decoration-none" style="color: var(--accent-color);">HirotakaDango</a>
-          </small>
-        </div>
+        </header>
+
+        <section class="notes-view" id="notesView">
+          <div class="notes-grid" id="notesGrid"></div>
+        </section>
+
+        <button class="fab" id="newNoteFab" title="New Note">
+          <svg class="icon" viewBox="0 0 24 24"><use href="#icon-add"></use></svg>
+        </button>
+      </main>
+    </div>
+
+    <div class="selection-bar" id="selectionBar">
+      <div style="display:flex; align-items:center; gap: 4px;">
+        <button class="icon-btn" id="toggleSelectAllBtn" title="Select / Unselect All" style="color: inherit;">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"/></svg>
+        </button>
+        <span style="font-weight: 600; font-size: 1.1rem; margin-left: 8px;" id="selectionCount">0</span>
       </div>
-      <div id="singleNoteView" style="display: none;">
-        <div id="singleNoteDualCol" class="d-flex flex-row">
-          <div id="singleNoteSidebarColumn">
-            <div class="d-flex justify-content-between align-items-center p-3 border-bottom" style="border-color: var(--border-color) !important;">
-              <div class="fw-bold fs-5 text-light">All Notes</div>
-              <button id="sidebarNewNoteBtn" class="btn btn-primary btn-sm rounded-3 fw-bold px-3"><i class="bi bi-plus-lg me-1"></i> New</button>
-            </div>
-            <div class="flex-grow-1 overflow-auto p-3 d-flex flex-column gap-1" id="sidebarContentWrapper">
-              <div id="singleNoteSidebarList" class="flex-grow-1 pb-2"></div>
-              <button id="sidebarLoadMoreBtn" class="load-more-btn w-100" style="display:none;">Load More...</button>
-            </div>
-          </div>
-          <div id="singleNoteMainColumn" class="flex-grow-1 d-flex flex-column">
-            <div id="singleNoteMainNavbar" class="d-flex justify-content-between align-items-center bg-dark-subtle py-1 px-3">
-              <div class="d-flex gap-3">
-                <button id="backBtn" class="btn border-0 action-btn">
-                  <i class="bi bi-chevron-left link-body-emphasis" style="-webkit-text-stroke: 2px;"></i>
-                </button>
-                <button id="undoBtn" class="btn border-0 action-btn" title="Undo">
-                  <i class="bi bi-arrow-counterclockwise"></i>
-                </button>
-              </div>
-              <div class="d-flex align-items-center gap-3">
-                <span id="noteDate" class="text-muted"></span>
-                <span class="mx-2 d-none d-md-block">|</span>
-                <select id="noteCategorySelect" class="d-none d-md-block form-select form-select-sm w-auto ms-0"></select>
-              </div>
-              <div class="d-flex gap-3">
-                <button id="redoBtn" class="btn border-0 action-btn" title="Redo">
-                  <i class="bi bi-arrow-clockwise"></i>
-                </button>
-                <button id="findReplaceBtn" class="btn border-0 action-btn" title="Find &amp; Replace">
-                  <i class="bi bi-search"></i>
-                </button>
-              </div>
-            </div>
-            <div id="noteContent" class="form-control rounded-0 p-4 border-0 bg-dark-subtle text-light" contenteditable="true"></div>
-            <div id="findBar">
-              <div class="mb-2">
-                <input type="text" id="findInput" class="form-control form-control-sm bg-dark text-light border-0" placeholder="Find..." autocomplete="off">
-              </div>
-              <div id="findCounter" class="mb-3 text-warning fw-medium text-wrap text-break" style="font-size: 0.85rem; display: none;"></div>
-              <div class="mb-3">
-                <input type="text" id="replaceInput" class="form-control form-control-sm bg-dark text-light border-0" placeholder="Replace with..." autocomplete="off">
-              </div>
-              <div class="d-flex justify-content-between align-items-center my-3">
-                <div class="d-flex gap-3 pt-1 align-items-center">
-                  <div class="form-check form-check-sm my-auto">
-                    <input class="form-check-input bol" type="checkbox" id="caseSensitive">
-                    <label class="form-check-label text-nowrap" for="caseSensitive">Match Case</label>
-                  </div>
-                  <div class="form-check form-check-sm my-auto">
-                    <input class="form-check-input bol" type="checkbox" id="wholeWord">
-                    <label class="form-check-label text-nowrap" for="wholeWord">Whole Word</label>
-                  </div>
-                </div>
-                <button id="closeFindBar" class="ms-3 btn btn-secondary btn-sm border-0 my-auto">Close</button>
-              </div>
-              <div class="d-flex flex-wrap gap-2">
-                <button id="findPrevBtn" class="btn btn-secondary btn-sm flex-fill">Prev</button>
-                <button id="findNextBtn" class="btn btn-secondary btn-sm flex-fill">Next</button>
-                <button id="replaceBtn" class="btn btn-outline-primary btn-sm flex-fill">Replace</button>
-                <button id="replaceAllBtn" class="btn btn-primary btn-sm flex-fill">Replace All</button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div style="display:flex; gap:12px;">
+        <button class="icon-btn" id="bulkDownloadBtn" title="Download ZIP" style="color: inherit;">
+          <svg class="icon" viewBox="0 0 24 24"><use href="#icon-download"></use></svg>
+        </button>
+        <button class="icon-btn" id="bulkDeleteBtn" title="Delete Selected" style="color: var(--md-sys-color-error);">
+          <svg class="icon" viewBox="0 0 24 24"><use href="#icon-delete"></use></svg>
+        </button>
+        <button class="icon-btn" id="cancelSelectBtn" title="Cancel" style="color: inherit;">
+          <svg class="icon" viewBox="0 0 24 24"><use href="#icon-close"></use></svg>
+        </button>
       </div>
     </div>
-    <input type="file" id="importInput" style="display: none;" accept=".json" />
-    <input type="file" id="importTxtInput" style="display: none;" accept=".txt, text/plain" multiple />
-    <div id="wordCounter" class="bg-light text-dark bg-opacity-50" style="display: none;">Words: 0 | Chars: 0</div>
+
+    <div class="editor-overlay" id="editorOverlay">
+      <header class="editor-header">
+        <div class="editor-actions">
+          <button class="icon-btn" id="closeEditorBtn" title="Back">
+            <svg class="icon" viewBox="0 0 24 24"><use href="#icon-back"></use></svg>
+          </button>
+        </div>
+
+        <div class="editor-actions">
+          <button class="icon-btn" id="editorFindBtn" title="Find & Replace">
+            <svg class="icon" viewBox="0 0 24 24"><use href="#icon-find"></use></svg>
+          </button>
+          <button class="icon-btn" id="editorStarBtn" title="Toggle Star">
+            <svg class="icon" viewBox="0 0 24 24" id="editorStarIcon"><use href="#icon-star-border"></use></svg>
+          </button>
+          <div class="dropdown" id="editorDropdown">
+            <button class="icon-btn" id="editorMoreBtn" title="More Options">
+              <svg class="icon" viewBox="0 0 24 24"><use href="#icon-more"></use></svg>
+            </button>
+            <div class="dropdown-menu" id="editorMoreMenu">
+              <div class="dropdown-item" id="editorUndoBtn">
+                <svg class="icon" viewBox="0 0 24 24"><use href="#icon-undo"></use></svg> Undo
+              </div>
+              <div class="dropdown-item" id="editorRedoBtn">
+                <svg class="icon" viewBox="0 0 24 24"><use href="#icon-redo"></use></svg> Redo
+              </div>
+              <div class="dropdown-item" id="editorFullscreenBtn">
+                <svg class="icon" viewBox="0 0 24 24"><use href="#icon-fullscreen"></use></svg> Full Screen
+              </div>
+              <div class="dropdown-item" id="editorDownloadBtn">
+                <svg class="icon" viewBox="0 0 24 24"><use href="#icon-download"></use></svg> Download
+              </div>
+              <div class="dropdown-item" id="editorDeleteBtn" style="color: var(--md-sys-color-error);">
+                <svg class="icon" viewBox="0 0 24 24"><use href="#icon-delete"></use></svg> Delete
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="find-replace-panel" id="findReplacePanel">
+        <div class="find-header-row">
+          <span>Find and Replace</span>
+          <button class="icon-btn" id="closeFindBtn" style="padding: 4px;">
+            <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;"><use href="#icon-close"></use></svg>
+          </button>
+        </div>
+        <div class="find-row">
+          <svg class="icon" viewBox="0 0 24 24" style="color:var(--md-sys-color-outline); width:20px; flex-shrink: 0;"><use href="#icon-find"></use></svg>
+          <input type="text" id="findInput" placeholder="Find in text..." />
+          <span class="find-counter" id="findCounter">0/0</span>
+          <button class="icon-btn" id="findPrevBtn" style="padding:4px; flex-shrink: 0;" title="Previous"><svg class="icon" viewBox="0 0 24 24" style="width:20px;"><use href="#icon-chevron-up"></use></svg></button>
+          <button class="icon-btn" id="findNextBtn" style="padding:4px; flex-shrink: 0;" title="Next"><svg class="icon" viewBox="0 0 24 24" style="width:20px;"><use href="#icon-chevron-down"></use></svg></button>
+        </div>
+        <div class="find-row">
+          <svg class="icon" viewBox="0 0 24 24" style="color:var(--md-sys-color-outline); width:20px; flex-shrink: 0;"><use href="#icon-pencil"></use></svg>
+          <input type="text" id="replaceInput" placeholder="Replace with..." />
+        </div>
+        <div class="find-actions">
+          <button class="btn-small" id="replaceBtn">Replace</button>
+          <button class="btn-small" id="replaceAllBtn">Replace All</button>
+        </div>
+      </div>
+
+      <div class="editor-body">
+        <div class="editor-header-meta">
+          <input type="text" class="editor-title" id="editorTitle" placeholder="Note Title" />
+          <div class="editor-category-row" style="position: relative; display: flex; align-items: center;">
+            <span id="editorDate"></span>
+            <div style="width:1px;height:14px;background:var(--md-sys-color-outline-variant); margin:0 8px;"></div>
+            <svg class="icon" viewBox="0 0 24 24" style="width:18px;height:18px;"><use href="#icon-folder"></use></svg>
+            <select id="editorCategorySelect" style="margin-left: 1rem; padding-right: 32px; appearance: none; -webkit-appearance: none; background: transparent; z-index: 1;">
+              <option value="all">Uncategorized</option>
+            </select>
+            <svg class="icon" viewBox="0 0 24 24" style="position: absolute; right: 0; pointer-events: none; width: 22px; height: 22px; margin-left: 2rem; color: var(--md-sys-color-outline);"><use href="#icon-chevron-down"></use></svg>
+          </div>
+        </div>
+        
+        <textarea class="editor-content" id="editorContent" placeholder="Start typing here..."></textarea>
+      </div>
+
+      <footer class="editor-footer">
+        <span id="editorWordCount">0 words</span>
+        <span id="editorCharCount">0 characters</span>
+      </footer>
+    </div>
+
+    <div class="modal-backdrop" id="modalBackdrop">
+      <div class="modal-card">
+        <div class="modal-title" id="modalTitle">Title</div>
+        <div class="modal-content" id="modalContent"></div>
+        <div class="modal-actions" id="modalActions"></div>
+      </div>
+    </div>
+
+    <input type="file" id="fileImportTxt" accept=".txt" multiple style="display: none;" />
+    <input type="file" id="fileImportJson" accept=".json" style="display: none;" />
+
     <script>
-      let notes = {};
-      let currentNote = null;
-      let currentCategory = 'all';
-      let selectedNotes = new Set();
-      let filteredNoteIds = [];
-      let undoStack = [];
-      let redoStack =[];
-      let lastRecordedContent = '';
-      let autoSaveTimeout = null;
-      let categories =[];
-      const PAGE_SIZE = 15;
-      let currentPage = 1;
-      let sidebarPage = 1;
       let db = null;
+      let notes = [];
+      let categories = [];
+      let activeFilter = 'all'; 
+      let activeNote = null;
       let searchTimeout = null;
-      let sidebarScrollPos = 0;
-      let marker = null;
-      let currentMatchIndex = 0;
-      let matches =[];
-      let ignoreInput = false;
-
-      const allNotesView = document.getElementById('allNotesView');
-      const singleNoteView = document.getElementById('singleNoteView');
-      const noteList = document.getElementById('noteList');
-      const searchInput = document.getElementById('searchInput');
-      const sortSelect = document.getElementById('sortSelect');
-      const newNoteBtn = document.getElementById('newNoteBtn');
-      const exportBtn = document.getElementById('exportBtn');
-      const importBtn = document.getElementById('importBtn');
-      const importInput = document.getElementById('importInput');
-      const allNotesTab = document.getElementById('allNotesTab');
-      const favoritesTab = document.getElementById('favoritesTab');
-      const backBtn = document.getElementById('backBtn');
-      const undoBtn = document.getElementById('undoBtn');
-      const redoBtn = document.getElementById('redoBtn');
-      const noteContent = document.getElementById('noteContent');
-      const noteDate = document.getElementById('noteDate');
-      const wordCounter = document.getElementById('wordCounter');
-      const selectedNotesActions = document.getElementById('selectedNotesActions');
-      const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
-      const categorizeSelectedBtn = document.getElementById('categorizeSelectedBtn');
-      const downloadSelectedBtn = document.getElementById('downloadSelectedBtn');
-      const selectAllCheckbox = document.getElementById('selectAllCheckbox');
-      const selectedCount = document.getElementById('selectedCount');
-      const categoryFilter = document.getElementById('categoryFilter');
-      const singleNoteSidebarList = document.getElementById('singleNoteSidebarList');
-      const addCategoryBtn = document.getElementById('addCategoryBtn');
-      const noteCategorySelect = document.getElementById('noteCategorySelect');
-      const installButton = document.getElementById('installButton');
-      const paginationContainer = document.getElementById('paginationContainer');
-      const sidebarLoadMoreBtn = document.getElementById('sidebarLoadMoreBtn');
-      const findReplaceBtn = document.getElementById('findReplaceBtn');
-      const findBar = document.getElementById('findBar');
-      const findInput = document.getElementById('findInput');
-      const replaceInput = document.getElementById('replaceInput');
-      const caseSensitive = document.getElementById('caseSensitive');
-      const wholeWord = document.getElementById('wholeWord');
-      const findPrevBtn = document.getElementById('findPrevBtn');
-      const findNextBtn = document.getElementById('findNextBtn');
-      const replaceBtn = document.getElementById('replaceBtn');
-      const replaceAllBtn = document.getElementById('replaceAllBtn');
-      const closeFindBar = document.getElementById('closeFindBar');
-      const sidebarNewNoteBtn = document.getElementById('sidebarNewNoteBtn');
-      const importTxtBtn = document.getElementById('importTxtBtn');
-      const importTxtInput = document.getElementById('importTxtInput');
-
-      function escapeHTML(str) {
-        return (str || '').toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      }
-
-      function getEditorContent(el) {
-        let text = "";
-        const blockTags = new Set(["DIV", "P", "LI", "UL", "OL", "H1", "H2", "H3", "H4", "H5", "H6", "TR", "BLOCKQUOTE", "PRE", "SECTION"]);
-        function traverse(node) {
-          if (node.nodeType === Node.TEXT_NODE) {
-            text += node.nodeValue;
-          } else if (node.nodeName === "BR") {
-            text += "\n";
-          } else if (node.nodeType === Node.ELEMENT_NODE) {
-            const isBlock = blockTags.has(node.nodeName);
-            if (isBlock && text.length > 0 && !text.endsWith('\n')) {
-              text += '\n';
-            }
-            for (let child of node.childNodes) traverse(child);
-          }
-        }
-        for (let child of el.childNodes) traverse(child);
-        return text.replace(/\r\n/g, '\n');
-      }
-
-      function setEditorText(el, text) {
-        if (!text) {
-          el.innerHTML = '';
-          return;
-        }
-        el.innerHTML = escapeHTML(text).replace(/\r\n/g, '\n').replace(/\n/g, '<br>');
-      }
+      let selectedIds = new Set();
+      let multiSelectMode = false;
+      let saveTimeout = null;
+      let findMatches = [];
+      let currentMatchIdx = -1;
+      let sortBy = 'newest';
+      let textHistory = [];
+      let historyIdx = -1;
+      let historyTimeout = null;
+      let currentFilteredNotes = [];
+      let renderPage = 1;
+      const pageSize = 25;
 
       async function initDB() {
         return new Promise((resolve, reject) => {
-          const request = indexedDB.open('NoteTakeAppDB', 2);
-          request.onupgradeneeded = e => {
-            db = e.target.result;
-            if (!db.objectStoreNames.contains('notes')) {
-              db.createObjectStore('notes', { keyPath: 'id' }).createIndex('date', 'date');
-            }
+          const req = indexedDB.open('MaterialNoteProDB', 2);
+          req.onupgradeneeded = e => {
+            const database = e.target.result;
+            if (!database.objectStoreNames.contains('notes')) database.createObjectStore('notes', { keyPath: 'id' });
+            if (!database.objectStoreNames.contains('categories')) database.createObjectStore('categories', { keyPath: 'id' });
           };
-          request.onsuccess = e => { db = e.target.result; resolve(); };
-          request.onerror = reject;
+          req.onsuccess = e => { db = e.target.result; resolve(); };
+          req.onerror = () => reject('DB Error');
         });
       }
 
-      async function loadNotes() {
-        await initDB();
-        notes = {};
-        categories =[];
-        return new Promise(resolve => {
-          db.transaction('notes', 'readonly').objectStore('notes').getAll().onsuccess = e => {
-            e.target.result.forEach(note => {
-              notes[note.id] = note;
-              if (note.category && !categories.includes(note.category)) categories.push(note.category);
-            });
-            if (!categories.length) categories.push('all');
-            resolve();
-          };
+      function txPromise(storeName, mode, callback) {
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(storeName, mode);
+          const store = tx.objectStore(storeName);
+          const req = callback(store);
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
         });
       }
 
-      async function saveNoteToDB(note) {
-        return new Promise(r => db.transaction('notes', 'readwrite').objectStore('notes').put(note).onsuccess = r);
-      }
-
-      async function deleteFromDB(id) {
-        return new Promise(r => db.transaction('notes', 'readwrite').objectStore('notes').delete(id).onsuccess = r);
-      }
-
-      async function deleteNotesBulk(ids) {
-        return new Promise(r => {
-          const tx = db.transaction('notes', 'readwrite');
-          const store = tx.objectStore('notes');
-          let done = 0;
-          ids.forEach(id => store.delete(id).onsuccess = () => { if (++done === ids.length) r(); });
-        });
-      }
-
-      function renderCategoryFilterDropdown() {
-        categoryFilter.innerHTML = `<option value="all">All Categories</option>`;
-        categories.forEach(cat => categoryFilter.innerHTML += `<option value="${escapeHTML(cat)}">${escapeHTML(cat)}</option>`);
-      }
-
-      function renderNoteCategoryDropdown(selectedCat) {
-        noteCategorySelect.innerHTML = '';
-        categories.forEach(cat => {
-          const opt = document.createElement('option');
-          opt.value = cat;
-          opt.innerHTML = escapeHTML(cat);
-          if (cat === selectedCat) opt.selected = true;
-          noteCategorySelect.appendChild(opt);
-        });
-      }
-
-      function createNote() {
-        if (!categories.length) categories.push("all");
-        const noteId = Date.now().toString();
-        const note = { id: noteId, title: 'New Note', content: '', date: new Date().toISOString(), favorite: false, category: categories[0] || "all" };
-        notes[noteId] = note;
-        saveNoteToDB(note);
-        currentNote = noteId;
-        showSingleNote();
-      }
-
-      async function deleteNoteFromList(noteId) {
-        if (!notes[noteId] || !confirm('Delete this note?')) return;
-        delete notes[noteId];
-        selectedNotes.delete(noteId);
-        await deleteFromDB(noteId);
-        updateNoteList();
-        renderSingleNoteSidebarList(true);
-        updateSelectedNotesUI();
-        if (noteId === currentNote) {
-          const arr = Object.entries(notes).sort((a,b) => new Date(b[1].date) - new Date(a[1].date));
-          currentNote = arr.length ? arr[0][0] : null;
-          currentNote ? showSingleNote() : showAllNotes();
-        }
-      }
-
-      function toggleFavorite(noteId) {
-        if (notes[noteId]) {
-          notes[noteId].favorite = !notes[noteId].favorite;
-          saveNoteToDB(notes[noteId]);
-          updateNoteList();
-          renderSingleNoteSidebarList(true);
-        }
-      }
-
-      async function saveNote() {
-        if (!currentNote || !notes[currentNote]) return;
-        const note = notes[currentNote];
-        note.content = getEditorContent(noteContent);
-        note.title = (note.content.split('\n')[0] || 'Untitled').trim();
-        note.date = new Date().toISOString();
-        note.category = noteCategorySelect.value || "all";
-        await saveNoteToDB(note);
-        updateNoteList();
-        updateTotalWordCounter();
-        renderSingleNoteSidebarList(true);
-      }
-
-      function exportNotes() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(notes));
-        const a = document.createElement('a');
-        a.href = dataStr; a.download = "notes_export.json";
-        a.click();
-      }
-
-      function importNotes(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = async ev => {
-          try {
-            const imported = JSON.parse(ev.target.result);
-            for (let [id, n] of Object.entries(imported)) {
-              if (!n.id) n.id = id;
-              notes[id] = n;
-            }
-            const tx = db.transaction('notes', 'readwrite');
-            const store = tx.objectStore('notes');
-            Object.values(notes).forEach(n => store.put(n));
-            await loadNotes();
-            renderCategoryFilterDropdown();
-            updateNoteList();
-            alert('Imported successfully!');
-          } catch { alert('Invalid JSON'); }
-        };
-        reader.readAsText(file);
-      }
-
-      function showCopiedIndicator(card) {
-        let ind = card.querySelector('.copied-indicator');
-        if (!ind) {
-          ind = document.createElement('span');
-          ind.className = 'copied-indicator';
-          ind.innerHTML = 'Copied!';
-          card.appendChild(ind);
-        }
-        ind.classList.add('show');
-        setTimeout(() => ind.classList.remove('show'), 1200);
-      }
-
-      function renderNoteCard(note, noteId, opts = {}) {
-        const { showCheckbox = false, selected = false, showCategory = true, showActions = true, active = false, limitChars = 200 } = opts;
-        const card = document.createElement('div');
-        card.className = `card bg-dark note-card border-0 rounded-4 position-relative max-h-note ${!showCheckbox && showActions ? '' : 'ps-5'}`;
-        if (active) card.classList.add('active');
-
-        const body = document.createElement('div'); body.className = "card-body";
-        const header = document.createElement('div'); header.className = "note-header";
-        const left = document.createElement('span');
-        const dateEl = document.createElement('small'); dateEl.className = "fw-medium";
-        dateEl.innerHTML = escapeHTML(new Date(note.date).toLocaleDateString('en-US'));
-        left.appendChild(dateEl);
-
-        const btns = document.createElement('div');
-        if (showActions) {
-          const copy = document.createElement('button'); copy.className = 'action-btn'; copy.innerHTML = '<i class="bi bi-copy"></i>';
-          copy.onclick = e => { e.stopPropagation(); navigator.clipboard.writeText(note.content || '').then(() => showCopiedIndicator(card)); };
-
-          const dlContainer = document.createElement('div');
-          dlContainer.className = 'dropdown d-inline-flex align-items-center';
-
-          const dlBtn = document.createElement('button');
-          dlBtn.className = 'action-btn';
-          dlBtn.setAttribute('data-bs-toggle', 'dropdown');
-          dlBtn.innerHTML = '<i class="bi bi-download"></i>';
-          dlBtn.onclick = e => e.stopPropagation();
-
-          const dlMenu = document.createElement('ul');
-          dlMenu.className = 'dropdown-menu dropdown-menu-end shadow-sm';
-          dlMenu.style.minWidth = '100px';['TXT', 'HTML', 'PDF'].forEach(type => {
-            const li = document.createElement('li');
-            const btn = document.createElement('button');
-            btn.className = 'dropdown-item btn-sm text-center fw-medium';
-            btn.innerHTML = type;
-            btn.onclick = e => {
-              e.stopPropagation();
-              const drop = bootstrap.Dropdown.getInstance(dlBtn);
-              if (drop) drop.hide();
-              const suggested = (note.content.split('\n')[0] || 'Untitled').trim().slice(0, 40) || "Untitled";
-              const fn = prompt(`Filename for ${type}:`, suggested);
-              if (fn === null) return;
-              const clean = (fn || "Untitled").trim() || "Untitled";
-              if (type === 'TXT') {
-                const blob = new Blob([note.content || ''], { type: 'text/plain' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = clean + ".txt";
-                a.click();
-                URL.revokeObjectURL(a.href);
-              } else if (type === 'HTML') {
-                const htmlContent = `<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <title>${escapeHTML(clean)}</title>\n</head>\n<body>\n  <pre style="font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">${escapeHTML(note.content || '')}</pre>\n</body>\n</html>`;
-                const blob = new Blob([htmlContent], { type: 'text/html' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = clean + ".html";
-                a.click();
-                URL.revokeObjectURL(a.href);
-              } else if (type === 'PDF') {
-                if (typeof html2pdf === 'undefined') {
-                  alert('PDF library is not loaded.');
-                  return;
-                }
-                const tempDiv = document.createElement('div');
-                tempDiv.style.fontFamily = 'monospace';
-                tempDiv.style.whiteSpace = 'pre-wrap';
-                tempDiv.style.padding = '20px';
-                tempDiv.innerText = note.content || '';
-                html2pdf().set({
-                  margin: 10,
-                  filename: clean + '.pdf',
-                  html2canvas: { scale: 2 },
-                  jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                }).from(tempDiv).save();
-              }
-            };
-            li.appendChild(btn);
-            dlMenu.appendChild(li);
-          });
-          dlContainer.append(dlBtn, dlMenu);
-
-          const fav = document.createElement('button'); fav.className = 'action-btn'; fav.innerHTML = `<i class="bi ${note.favorite ? 'bi-star-fill' : 'bi-star'}"></i>`;
-          fav.onclick = e => { e.stopPropagation(); toggleFavorite(noteId); };
-
-          const del = document.createElement('button'); del.className = 'action-btn'; del.innerHTML = '<i class="bi bi-trash3-fill"></i>';
-          del.onclick = e => { e.stopPropagation(); deleteNoteFromList(noteId); };
-
-          btns.append(copy, dlContainer, fav, del);
-        }
-        header.append(left, btns);
-
-        const catRow = document.createElement('div'); catRow.className = "mt-1";
-        if (showCategory && note.category) {
-          const cat = document.createElement('span'); cat.className = "category-badge bg-dark-subtle text-truncate-badge";
-          cat.innerHTML = escapeHTML(note.category); cat.title = note.category;
-          catRow.appendChild(cat);
-        }
-
-        const contentDiv = document.createElement('div'); contentDiv.className = 'mt-3 text-light-emphasis';
-        contentDiv.innerHTML = escapeHTML((note.content || '').substring(0, limitChars) + ((note.content || '').length > limitChars ? '...' : ''));
-
-        if (showCheckbox) {
-          const cbDiv = document.createElement('div'); cbDiv.className = "position-absolute top-50 start-0 translate-middle-y ms-4";
-          const cb = document.createElement('input'); cb.type = 'checkbox'; cb.className = 'form-check-input';
-          cb.checked = selected;
-          cb.onchange = e => { e.stopPropagation(); if (cb.checked) selectedNotes.add(noteId); else selectedNotes.delete(noteId); updateSelectedNotesUI(); };
-          cbDiv.appendChild(cb); card.appendChild(cbDiv);
-        }
-
-        body.append(header, catRow, contentDiv);
-        card.appendChild(body);
-
-        if (showActions) {
-          btns.className = "single-note-card-actions";
-          body.classList.add("single-note-card-content");
-          if (!card.querySelector('.copied-indicator')) {
-            const ind = document.createElement('span'); ind.className = 'copied-indicator'; ind.innerHTML = 'Copied!';
-            card.appendChild(ind);
+      async function loadData() {
+        notes = await txPromise('notes', 'readonly', s => s.getAll());
+        categories = await txPromise('categories', 'readonly', s => s.getAll());
+        if (categories.length === 0) {
+          const defaultCats = ['Personal', 'Work', 'Ideas'];
+          for (let c of defaultCats) {
+            const catObj = { id: c, name: c };
+            await txPromise('categories', 'readwrite', s => s.put(catObj));
+            categories.push(catObj);
           }
         }
-        return card;
       }
 
-      function getFilteredNotesArr() {
-        const q = (searchInput.value || '').toLowerCase();
-        const cat = categoryFilter.value;
-        let arr = Object.entries(notes).filter(([_, n]) => {
-          const matchSearch = !q || (n.title || '').toLowerCase().includes(q) || (n.content || '').toLowerCase().includes(q);
-          return matchSearch && (cat === 'all' || n.category === cat) && (currentCategory !== 'favorites' || n.favorite);
+      async function saveNoteDB(note) {
+        await txPromise('notes', 'readwrite', s => s.put(note));
+        const idx = notes.findIndex(n => n.id === note.id);
+        if (idx > -1) notes[idx] = note; else notes.unshift(note);
+      }
+
+      async function deleteNoteDB(id) {
+        await txPromise('notes', 'readwrite', s => s.delete(id));
+        notes = notes.filter(n => n.id !== id);
+      }
+
+      function renderSidebar() {
+        const catList = document.getElementById('categoryList');
+        catList.innerHTML = '';
+        categories.forEach(cat => {
+          const li = document.createElement('li');
+          li.className = `drawer-item ${activeFilter === cat.id ? 'active' : ''}`;
+          li.innerHTML = `<svg class="icon" viewBox="0 0 24 24"><use href="#icon-folder"></use></svg> ${escapeHTML(cat.name)}`;
+          li.onclick = () => setFilter(cat.id);
+          catList.appendChild(li);
         });
-        arr.sort((a, b) => sortSelect.value === 'newest' ? new Date(b[1].date) - new Date(a[1].date) : new Date(a[1].date) - new Date(b[1].date));
-        return arr;
-      }
-
-      function updateNoteList() {
-        noteList.innerHTML = '';
-        const frag = document.createDocumentFragment();
-        const arr = getFilteredNotesArr();
-        filteredNoteIds = arr.map(([id]) => id);
-        const pageStart = (currentPage - 1) * PAGE_SIZE;
-        arr.slice(pageStart, pageStart + PAGE_SIZE).forEach(([id, n]) => {
-          const c = renderNoteCard(n, id, { showCheckbox: true, selected: selectedNotes.has(id), showCategory: true, showActions: true });
-          c.onclick = e => { if (!e.target.closest('button') && !e.target.closest('input[type="checkbox"]')) { currentNote = id; showSingleNote(); } };
-          frag.appendChild(c);
+        document.querySelectorAll('.sidebar .drawer-item[data-filter]').forEach(el => {
+          el.classList.toggle('active', el.dataset.filter === activeFilter);
         });
-        noteList.appendChild(frag);
-        renderPagination(arr.length);
-        updateSelectedNotesUI();
       }
 
-      function renderPagination(total) {
-        paginationContainer.innerHTML = '';
-        const pages = Math.ceil(total / PAGE_SIZE) || 1;
-        if (pages <= 1) return;
-        const p = document.createElement('button'); p.className = 'pagination-btn'; p.innerHTML = '&lt;'; p.disabled = currentPage <= 1;
-        p.onclick = () => { currentPage = Math.max(1, currentPage - 1); updateNoteList(); };
-        paginationContainer.appendChild(p);
-        const txt = document.createElement('span'); txt.className = 'pagination-page';
-        txt.innerHTML = `${currentPage}/${pages}`;
-        txt.onclick = () => {
-          const np = parseInt(prompt(`Page 1-${pages}`, currentPage), 10);
-          if (np && np >= 1 && np <= pages) { currentPage = np; updateNoteList(); }
-        };
-        paginationContainer.appendChild(txt);
-        const n = document.createElement('button'); n.className = 'pagination-btn'; n.innerHTML = '&gt;'; n.disabled = currentPage >= pages;
-        n.onclick = () => { currentPage = Math.min(pages, currentPage + 1); updateNoteList(); };
-        paginationContainer.appendChild(n);
+      function setFilter(filter) {
+        activeFilter = filter;
+        renderSidebar();
+        renderNotes();
+        if (window.innerWidth <= 768) toggleSidebar(false);
       }
 
-      function getFilteredSidebarArr() {
-        const q = (searchInput.value || '').toLowerCase();
-        const cat = categoryFilter.value;
-        let arr = Object.entries(notes).filter(([_, n]) => {
-          return (!q || (n.title || '').toLowerCase().includes(q) || (n.content || '').toLowerCase().includes(q)) && (cat === 'all' || n.category === cat);
+      function renderNotes(reset = true) {
+        const grid = document.getElementById('notesGrid');
+        if (reset) {
+          renderPage = 1;
+          grid.innerHTML = '';
+          const query = document.getElementById('searchInput').value.toLowerCase();
+          
+          const filtered = notes.filter(n => {
+            if (activeFilter === 'starred' && !n.starred) return false;
+            if (activeFilter !== 'all' && activeFilter !== 'starred' && n.category !== activeFilter) return false;
+            if (query && !n.title.toLowerCase().includes(query) && !n.content.toLowerCase().includes(query)) return false;
+            return true;
+          });
+
+          filtered.sort((a, b) => {
+            return sortBy === 'newest' ? b.modified - a.modified : a.modified - b.modified;
+          });
+
+          currentFilteredNotes = filtered;
+
+          if (currentFilteredNotes.length === 0) {
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 48px; color: var(--md-sys-color-outline); font-size: 1.1rem;">No notes found.</div>`;
+            return;
+          }
+        }
+
+        const startIdx = (renderPage - 1) * pageSize;
+        const endIdx = startIdx + pageSize;
+        const displayList = currentFilteredNotes.slice(startIdx, endIdx); 
+
+        displayList.forEach(note => {
+          const isSelected = selectedIds.has(note.id);
+          const card = document.createElement('div');
+          card.className = `note-card ${isSelected ? 'selected' : ''}`;
+          card.dataset.id = note.id;
+          
+          const displayTitle = (note.title && note.title.trim()) ? note.title : 
+                               (note.content && note.content.trim() ? note.content.trim().split(/\s+/).slice(0, 5).join(' ') : 'title');
+          
+          card.innerHTML = `
+            <div class="note-card-title">${escapeHTML(displayTitle)}</div>
+            <div class="note-card-body">${escapeHTML(note.content || '')}</div>
+            <div class="note-card-footer">
+              <span>${new Date(note.modified).toLocaleDateString()}</span>
+              ${note.category && note.category !== 'all' ? `<span class="note-chip">${escapeHTML(getCategoryName(note.category))}</span>` : ''}
+            </div>
+          `;
+
+          let pressTimer;
+          let startX = 0, startY = 0;
+          let wasLongPress = false;
+          
+          const startPress = (e) => { 
+            wasLongPress = false;
+            if (e.touches) {
+              startX = e.touches[0].clientX;
+              startY = e.touches[0].clientY;
+            }
+            pressTimer = setTimeout(() => { 
+              wasLongPress = true;
+              toggleMultiSelect(note.id); 
+              if (navigator.vibrate) navigator.vibrate(50);
+            }, 600); 
+          };
+          
+          const cancelPress = () => clearTimeout(pressTimer);
+          
+          const movePress = (e) => {
+            if (!e.touches) return;
+            const dx = Math.abs(e.touches[0].clientX - startX);
+            const dy = Math.abs(e.touches[0].clientY - startY);
+            if (dx > 10 || dy > 10) clearTimeout(pressTimer);
+          };
+          
+          card.addEventListener('mousedown', startPress);
+          card.addEventListener('touchstart', startPress, { passive: true });
+          card.addEventListener('mouseup', cancelPress);
+          card.addEventListener('mouseleave', cancelPress);
+          card.addEventListener('touchend', cancelPress);
+          card.addEventListener('touchmove', movePress, { passive: true });
+
+          card.onclick = (e) => {
+            if (wasLongPress) {
+              e.preventDefault();
+              return;
+            }
+            if (multiSelectMode) toggleMultiSelect(note.id);
+            else openEditor(note);
+          };
+
+          grid.appendChild(card);
         });
-        arr.sort((a, b) => sortSelect.value === 'newest' ? new Date(b[1].date) - new Date(a[1].date) : new Date(a[1].date) - new Date(b[1].date));
-        return arr;
+      }
+      
+      function getCategoryName(id) {
+        const c = categories.find(c => c.id === id);
+        return c ? c.name : 'Uncategorized';
       }
 
-      function renderSingleNoteSidebarList(reset = false) {
-        const wrapper = document.getElementById('sidebarContentWrapper');
-        if (reset) { sidebarPage = 1; sidebarScrollPos = wrapper ? wrapper.scrollTop : 0; }
-        singleNoteSidebarList.innerHTML = '';
-        const frag = document.createDocumentFragment();
-        const arr = getFilteredSidebarArr();
-        arr.slice(0, sidebarPage * PAGE_SIZE).forEach(([id, n]) => {
-          const c = renderNoteCard(n, id, { showCheckbox: false, showCategory: true, showActions: true, active: id === currentNote });
-          c.onclick = e => { if (!e.target.closest('button')) { currentNote = id; showSingleNote(); } };
-          frag.appendChild(c);
+      function updateSelectionUI() {
+        document.getElementById('selectionCount').innerText = selectedIds.size;
+        document.querySelectorAll('.note-card').forEach(card => {
+          if (selectedIds.has(card.dataset.id)) card.classList.add('selected');
+          else card.classList.remove('selected');
         });
-        singleNoteSidebarList.appendChild(frag);
-        sidebarLoadMoreBtn.style.display = arr.length > sidebarPage * PAGE_SIZE ? '' : 'none';
-        if (wrapper) wrapper.scrollTop = sidebarScrollPos;
       }
 
-      function updateSelectedNotesUI() {
-        selectedNotesActions.style.display = Object.keys(notes).length ? 'block' : 'none';
-        selectedCount.innerHTML = selectedNotes.size + ' selected';
-        if (selectAllCheckbox) {
-          selectAllCheckbox.checked = filteredNoteIds.length && selectedNotes.size === filteredNoteIds.length;
-          selectAllCheckbox.indeterminate = selectedNotes.size > 0 && selectedNotes.size < filteredNoteIds.length;
+      function toggleMultiSelect(id) {
+        if (!multiSelectMode) {
+          multiSelectMode = true;
+          document.getElementById('selectionBar').classList.add('active');
+        }
+        
+        if (selectedIds.has(id)) selectedIds.delete(id);
+        else selectedIds.add(id);
+        
+        if (selectedIds.size === 0) {
+          multiSelectMode = false;
+          document.getElementById('selectionBar').classList.remove('active');
+        }
+        
+        updateSelectionUI();
+      }
+
+      function openEditor(note) {
+        activeNote = note;
+        document.getElementById('editorTitle').value = note.title;
+        document.getElementById('editorContent').value = note.content;
+        document.getElementById('editorDate').innerText = new Date(note.modified).toLocaleDateString();
+        
+        const catSelect = document.getElementById('editorCategorySelect');
+        catSelect.innerHTML = '<option value="all">Uncategorized</option>';
+        categories.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.id; opt.innerText = c.name;
+          if (note.category === c.id) opt.selected = true;
+          catSelect.appendChild(opt);
+        });
+
+        textHistory = [note.content || ''];
+        historyIdx = 0;
+
+        updateEditorStar();
+        updateWordCount();
+        document.getElementById('findReplacePanel').classList.remove('active');
+        document.getElementById('editorMoreMenu').classList.remove('active');
+        document.getElementById('editorOverlay').classList.add('active');
+      }
+
+      function updateEditorStar() {
+        const useId = activeNote && activeNote.starred ? '#icon-star' : '#icon-star-border';
+        document.getElementById('editorStarIcon').innerHTML = `<use href="${useId}"></use>`;
+        document.getElementById('editorStarBtn').style.color = activeNote && activeNote.starred ? '#f5b041' : '';
+      }
+
+      function closeEditor() {
+        saveCurrentNote();
+        document.getElementById('editorOverlay').classList.remove('active');
+        activeNote = null;
+        renderNotes();
+      }
+
+      function saveCurrentNote() {
+        if (!activeNote) return;
+        activeNote.title = document.getElementById('editorTitle').value.trim();
+        activeNote.content = document.getElementById('editorContent').value;
+        activeNote.category = document.getElementById('editorCategorySelect').value;
+        activeNote.modified = Date.now();
+        document.getElementById('editorDate').innerText = new Date(activeNote.modified).toLocaleDateString();
+        saveNoteDB(activeNote);
+      }
+
+      function pushHistory(val) {
+        if (textHistory[historyIdx] === val) return;
+        textHistory = textHistory.slice(0, historyIdx + 1);
+        textHistory.push(val);
+        if (textHistory.length > 50) textHistory.shift();
+        else historyIdx++;
+      }
+
+      function doUndo() {
+        if (historyIdx > 0) {
+          historyIdx--;
+          document.getElementById('editorContent').value = textHistory[historyIdx];
+          updateWordCount();
+          saveCurrentNote();
         }
       }
 
-      async function deleteSelectedNotes() {
-        if (!selectedNotes.size || !confirm(`Delete ${selectedNotes.size} notes?`)) return;
-        const ids = [...selectedNotes];
-        ids.forEach(id => delete notes[id]);
-        await deleteNotesBulk(ids);
-        selectedNotes.clear();
-        updateSelectedNotesUI();
-        updateNoteList();
+      function doRedo() {
+        if (historyIdx < textHistory.length - 1) {
+          historyIdx++;
+          document.getElementById('editorContent').value = textHistory[historyIdx];
+          updateWordCount();
+          saveCurrentNote();
+        }
       }
 
-      function categorizeSelectedNotes() {
-        if (!selectedNotes.size) return;
-        let cat = prompt('Category for selected notes:', '');
-        if (cat === null) return;
-        cat = cat.trim();
-        if (!cat) return;
-        if (!categories.includes(cat)) { categories.push(cat); renderCategoryFilterDropdown(); }
-        selectedNotes.forEach(id => { if (notes[id]) notes[id].category = cat; });
-        Object.values(notes).forEach(n => saveNoteToDB(n));
-        updateNoteList();
-        renderSingleNoteSidebarList(true);
+      function updateWordCount() {
+        const text = document.getElementById('editorContent').value;
+        const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+        document.getElementById('editorWordCount').innerText = `${words} words`;
+        document.getElementById('editorCharCount').innerText = `${text.length} chars`;
       }
 
-      async function downloadSelectedNotesZip() {
-        if (!selectedNotes.size) return;
-        if (typeof JSZip === 'undefined') {
-          alert('JSZip library is not loaded. Please ensure you have internet connection.');
+      document.getElementById('editorContent').addEventListener('input', (e) => {
+        clearTimeout(saveTimeout);
+        clearTimeout(historyTimeout);
+        updateWordCount();
+        if (document.getElementById('findReplacePanel').classList.contains('active')) executeFind();
+        saveTimeout = setTimeout(saveCurrentNote, 1000);
+        historyTimeout = setTimeout(() => {
+          pushHistory(e.target.value);
+        }, 400);
+      });
+      
+      document.getElementById('editorTitle').addEventListener('input', () => {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(saveCurrentNote, 1000);
+      });
+      document.getElementById('editorCategorySelect').addEventListener('change', saveCurrentNote);
+
+      function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => {
+            console.warn(`Error attempting to enable full-screen mode: ${err.message}`);
+          });
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      }
+
+      function toggleFindReplace() {
+        const panel = document.getElementById('findReplacePanel');
+        panel.classList.toggle('active');
+        if (panel.classList.contains('active')) {
+          document.getElementById('findInput').focus();
+          executeFind();
+        } else {
+          document.getElementById('editorContent').focus();
+        }
+      }
+      
+      document.getElementById('closeFindBtn').onclick = () => {
+        document.getElementById('findReplacePanel').classList.remove('active');
+      };
+
+      function executeFind() {
+        const text = document.getElementById('editorContent').value;
+        const query = document.getElementById('findInput').value;
+        findMatches = [];
+        if (!query) {
+          updateFindUI(-1);
           return;
         }
-        const zip = new JSZip();
-        const folder = zip.folder("notes_export");
-        selectedNotes.forEach(id => {
-          const n = notes[id];
-          if (n) {
-            let safeTitle = (n.title || 'Untitled').trim().replace(/[\\/:*?"<>|]/g, '_').substring(0, 50);
-            if (!safeTitle) safeTitle = 'Untitled';
-            const shortId = id.substring(id.length - 4);
-            const content = n.content || '';
-            folder.file(`${safeTitle}_${shortId}.txt`, content);
+
+        const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        let match;
+        while ((match = regex.exec(text)) !== null) {
+          findMatches.push({ index: match.index, length: match[0].length });
+        }
+        
+        currentMatchIdx = findMatches.length > 0 ? 0 : -1;
+        updateFindUI(currentMatchIdx);
+      }
+
+      function updateFindUI(idx) {
+        currentMatchIdx = idx;
+        const counter = document.getElementById('findCounter');
+        if (findMatches.length === 0) {
+          counter.innerText = '0/0';
+          return;
+        }
+        counter.innerText = `${idx + 1}/${findMatches.length}`;
+        
+        const match = findMatches[idx];
+        const ta = document.getElementById('editorContent');
+        
+        ta.focus({ preventScroll: true });
+        ta.setSelectionRange(match.index, match.index + match.length);
+        
+        let mirror = document.getElementById('ta-mirror');
+        if (!mirror) {
+          mirror = document.createElement('div');
+          mirror.id = 'ta-mirror';
+          document.body.appendChild(mirror);
+        }
+        
+        const style = window.getComputedStyle(ta);
+        mirror.style.cssText = `
+          position: absolute;
+          visibility: hidden;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          top: 0; 
+          left: 0;
+          width: ${ta.clientWidth}px;
+          font-family: ${style.fontFamily};
+          font-size: ${style.fontSize};
+          line-height: ${style.lineHeight};
+          padding: ${style.padding};
+          border: ${style.border};
+          box-sizing: border-box;
+        `;
+        
+        mirror.textContent = ta.value.substring(0, match.index);
+        const span = document.createElement('span');
+        span.textContent = ta.value.substring(match.index, match.index + match.length);
+        mirror.appendChild(span);
+        
+        ta.scrollTop = span.offsetTop - (ta.clientHeight / 2) + (span.offsetHeight / 2);
+      }
+
+      function navFind(dir) {
+        if (findMatches.length === 0) return;
+        let next = currentMatchIdx + dir;
+        if (next >= findMatches.length) next = 0;
+        if (next < 0) next = findMatches.length - 1;
+        updateFindUI(next);
+      }
+
+      function execReplace() {
+        if (currentMatchIdx < 0 || findMatches.length === 0) return;
+        const rep = document.getElementById('replaceInput').value;
+        const ta = document.getElementById('editorContent');
+        const match = findMatches[currentMatchIdx];
+        
+        ta.value = ta.value.substring(0, match.index) + rep + ta.value.substring(match.index + match.length);
+        executeFind(); 
+      }
+
+      function execReplaceAll() {
+        const query = document.getElementById('findInput').value;
+        if (!query) return;
+        const rep = document.getElementById('replaceInput').value;
+        const ta = document.getElementById('editorContent');
+        const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        ta.value = ta.value.replace(regex, rep);
+        executeFind();
+      }
+
+      function showModal(title, contentHTML, actions) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalContent').innerHTML = contentHTML;
+        const actDiv = document.getElementById('modalActions');
+        actDiv.innerHTML = '';
+        actions.forEach(a => {
+          const btn = document.createElement('button');
+          btn.className = `btn ${a.filled ? 'btn-filled' : 'btn-text'}`;
+          
+          if (a.label === 'Download') {
+            btn.innerHTML = `Download<svg class="icon" viewBox="0 0 24 24" style="margin-left: 1rem; vertical-align: middle; width: 18px; height: 18px;"><use href="#icon-download"></use></svg>`;
+          } else {
+            btn.innerText = a.label;
           }
+          
+          btn.onclick = () => { a.onclick(); closeModal(); };
+          actDiv.appendChild(btn);
         });
-        try {
-          const content = await zip.generateAsync({ type: "blob" });
-          const a = document.createElement("a");
-          a.href = URL.createObjectURL(content);
-          a.download = `notes_export_${new Date().getTime()}.zip`;
-          a.click();
-          URL.revokeObjectURL(a.href);
-        } catch (e) {
-          alert("Failed to generate ZIP file.");
+        document.getElementById('modalBackdrop').classList.add('active');
+      }
+      function closeModal() { document.getElementById('modalBackdrop').classList.remove('active'); }
+
+      function manageCategories() {
+        let html = `<div class="cat-manage-list">`;
+        categories.forEach(c => {
+          html += `<div class="cat-manage-item">
+            <span style="font-weight: 500;">${escapeHTML(c.name)}</span>
+            <div style="display: flex; gap: 4px;">
+              <button class="icon-btn" onclick="renameCat('${c.id}')"><svg class="icon" viewBox="0 0 24 24"><use href="#icon-pencil"></use></svg></button>
+              <button class="icon-btn" onclick="deleteCat('${c.id}')" style="color:var(--md-sys-color-error)"><svg class="icon" viewBox="0 0 24 24"><use href="#icon-delete"></use></svg></button>
+            </div>
+          </div>`;
+        });
+        html += `</div>
+        <div style="margin-top:20px; display:flex; gap:12px;">
+          <input type="text" id="newCatInput" class="modal-input" placeholder="New Category" />
+          <button class="btn btn-filled" onclick="addCat()">Add</button>
+        </div>`;
+        
+        showModal('Manage Categories', html, [{ label: 'Done', filled: true, onclick: () => renderSidebar() }]);
+      }
+
+      window.addCat = async function() {
+        const val = document.getElementById('newCatInput').value.trim();
+        if (val && !categories.find(c => c.name.toLowerCase() === val.toLowerCase())) {
+          const id = 'cat_' + Date.now();
+          const obj = { id, name: val };
+          await txPromise('categories', 'readwrite', s => s.put(obj));
+          categories.push(obj);
+          manageCategories(); 
         }
       }
-
-      function updateTotalWordCounter() {
-        wordCounter.style.display = singleNoteView.style.display === 'block' ? 'block' : 'none';
-        const content = getEditorContent(noteContent) || '';
-        const w = content.trim().split(/\s+/).filter(Boolean).length;
-        const c = content.length;
-        wordCounter.innerHTML = `Words: ${w} | Chars: ${c}`;
-      }
-
-      function showAllNotes() {
-        allNotesView.style.display = 'block';
-        singleNoteView.style.display = 'none';
-        currentNote = null;
-        wordCounter.style.display = 'none';
-        findBar.style.display = 'none';
-        updateNoteList();
-      }
-
-      function showSingleNote() {
-        allNotesView.style.display = 'none';
-        singleNoteView.style.display = 'block';
-        if (!currentNote || !notes[currentNote]) return;
-        const n = notes[currentNote];
-        noteDate.innerHTML = escapeHTML(new Date(n.date).toLocaleDateString('en-US'));
-        setEditorText(noteContent, n.content || '');
-        renderNoteCategoryDropdown(n.category);
-        undoStack = [];
-        redoStack =[];
-        lastRecordedContent = getEditorContent(noteContent);
-        updateTotalWordCounter();
-        renderSingleNoteSidebarList(true);
-        noteContent.focus();
-        if (!marker) {
-          marker = new Mark(noteContent);
-        }
-        findBar.style.display = 'none';
-      }
-
-      function addCategory() {
-        let name = prompt("New category:", "");
-        if (name === null) return;
-        name = name.trim();
-        if (!name || categories.includes(name)) return alert("Invalid or duplicate");
-        categories.push(name);
-        renderCategoryFilterDropdown();
-        renderNoteCategoryDropdown(noteCategorySelect.value);
-      }
-
-      function recordUndoState() {
-        if (ignoreInput) return;
-        const current = getEditorContent(noteContent);
-        if (current !== lastRecordedContent) {
-          undoStack.push(lastRecordedContent);
-          lastRecordedContent = current;
-          redoStack =[];
+      window.renameCat = async function(id) {
+        const cat = categories.find(c => c.id === id);
+        const newVal = prompt('Rename category:', cat.name);
+        if (newVal && newVal.trim()) {
+          cat.name = newVal.trim();
+          await txPromise('categories', 'readwrite', s => s.put(cat));
+          manageCategories();
         }
       }
-
-      function undo() {
-        if (undoStack.length) {
-          ignoreInput = true;
-          redoStack.push(getEditorContent(noteContent));
-          setEditorText(noteContent, undoStack.pop());
-          lastRecordedContent = getEditorContent(noteContent);
-          saveNote();
-          updateTotalWordCounter();
-          if (findBar.style.display === 'block') highlightAllMatches(false);
-          ignoreInput = false;
-        }
-      }
-
-      function redo() {
-        if (redoStack.length) {
-          ignoreInput = true;
-          undoStack.push(getEditorContent(noteContent));
-          setEditorText(noteContent, redoStack.pop());
-          lastRecordedContent = getEditorContent(noteContent);
-          saveNote();
-          updateTotalWordCounter();
-          if (findBar.style.display === 'block') highlightAllMatches(false);
-          ignoreInput = false;
-        }
-      }
-
-      noteContent.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.key === 'z') {
-          e.preventDefault();
-          undo();
-        } else if (e.ctrlKey && e.key === 'y') {
-          e.preventDefault();
-          redo();
-        }
-      });
-
-      noteContent.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        if (text) {
-          const html = escapeHTML(text).replace(/\r\n/g, '\n').replace(/\n/g, '<br>');
-          document.execCommand('insertHTML', false, html);
-        }
-      });
-
-      function escapeRegExp(s) {
-        return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      }
-
-      function getFindRegex() {
-        let str = findInput.value;
-        if (!str) return null;
-        let flags = 'g';
-        if (!caseSensitive.checked) flags += 'i';
-        let pattern = escapeRegExp(str);
-        if (wholeWord.checked) pattern = '\\b' + pattern + '\\b';
-        try {
-          return new RegExp(pattern, flags);
-        } catch (e) {
-          return null;
-        }
-      }
-
-      function updateFindCounter() {
-        const findCounter = document.getElementById('findCounter');
-        const term = findInput.value;
-        if (!term) {
-          findCounter.style.display = 'none';
-          findCounter.innerText = '';
-        } else {
-          findCounter.style.display = 'block';
-          let current = matches.length > 0 ? currentMatchIndex + 1 : 0;
-          const displayTerm = term.length > 10 ? term.substring(0, 10) + '...' : term;
-          findCounter.innerText = `${displayTerm} (${current}/${matches.length})`;
-        }
-      }
-
-      function highlightAllMatches(preserveIndex = false) {
-        if (!marker) return;
-        let oldIndex = currentMatchIndex;
-        marker.unmark();
-        matches =[];
-        if (!preserveIndex) currentMatchIndex = 0;
-        updateFindCounter();
-        const str = findInput.value;
-        if (!str) return;
-        marker.mark(str, {
-          element: 'mark',
-          className: '',
-          caseSensitive: caseSensitive.checked,
-          separateWordSearch: false,
-          accuracy: wholeWord.checked ? 'exactly' : 'partially',
-          done: (count) => {
-            matches = Array.from(noteContent.querySelectorAll('mark'));
-            if (preserveIndex) {
-              currentMatchIndex = Math.max(0, Math.min(oldIndex, matches.length - 1));
-            } else {
-              currentMatchIndex = 0;
+      window.deleteCat = async function(id) {
+        if (confirm('Delete category? Notes will become Uncategorized.')) {
+          await txPromise('categories', 'readwrite', s => s.delete(id));
+          categories = categories.filter(c => c.id !== id);
+          
+          for (let n of notes) {
+            if (n.category === id) {
+              n.category = 'all';
+              await txPromise('notes', 'readwrite', s => s.put(n));
             }
-            highlightCurrentMatch();
           }
-        });
-      }
-
-      function highlightCurrentMatch() {
-        document.querySelectorAll('mark.current-match').forEach(el => el.classList.remove('current-match'));
-        if (matches.length > 0 && currentMatchIndex >= 0 && currentMatchIndex < matches.length) {
-          const current = matches[currentMatchIndex];
-          current.classList.add('current-match');
-          current.scrollIntoView({ block: 'center', behavior: 'smooth' });
-        }
-        updateFindCounter();
-      }
-
-      function findNext() {
-        if (!matches.length) {
-          highlightAllMatches(false);
-          if (!matches.length) { alert('No matches'); return; }
-        }
-        currentMatchIndex = (currentMatchIndex + 1) % matches.length;
-        highlightCurrentMatch();
-      }
-
-      function findPrev() {
-        if (!matches.length) {
-          highlightAllMatches(false);
-          if (!matches.length) { alert('No matches'); return; }
-        }
-        currentMatchIndex = (currentMatchIndex - 1 + matches.length) % matches.length;
-        highlightCurrentMatch();
-      }
-
-      function doReplace() {
-        if (!matches.length) {
-          findNext();
-          if (!matches.length) return;
-        }
-        const current = matches[currentMatchIndex];
-        if (!current) return;
-        const replaceText = replaceInput.value;
-        const textNode = current.firstChild;
-        if (textNode && textNode.nodeType === Node.TEXT_NODE) {
-          textNode.nodeValue = replaceText;
-          current.parentNode.normalize();
-          recordUndoState();
-          saveNote();
-          highlightAllMatches(true);
+          if (activeFilter === id) activeFilter = 'all';
+          manageCategories();
+          renderNotes();
         }
       }
 
-      function doReplaceAll() {
-        const regex = getFindRegex();
-        if (!regex) return;
-        const content = getEditorContent(noteContent);
-        const newContent = content.replace(regex, replaceInput.value);
-        if (newContent !== content) {
-          ignoreInput = true;
-          setEditorText(noteContent, newContent);
-          ignoreInput = false;
-          recordUndoState();
-          saveNote();
-          highlightAllMatches(false);
+      async function handleTxtImport(e) {
+        for (let file of e.target.files) {
+          const text = await file.text();
+          const id = 'note_' + Date.now() + Math.random().toString(36).substr(2);
+          await saveNoteDB({
+            id,
+            title: file.name.replace(/\.txt$/i, ''),
+            content: text,
+            category: activeFilter !== 'all' && activeFilter !== 'starred' ? activeFilter : 'all',
+            starred: false,
+            created: Date.now(),
+            modified: Date.now()
+          });
         }
+        renderNotes();
+        e.target.value = ''; 
       }
 
-      function toggleFindBar() {
-        if (findBar.style.display === 'none' || findBar.style.display === '') {
-          findBar.style.display = 'block';
-          findInput.focus();
-          highlightAllMatches(false);
-        } else {
-          findBar.style.display = 'none';
-          if (marker) marker.unmark();
-        }
+      async function handleJsonImport(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const text = await file.text();
+        try {
+          let data = JSON.parse(text);
+          let importedCount = 0;
+          
+          if (data && typeof data === 'object' && !Array.isArray(data)) {
+            data = Object.values(data);
+          }
+
+          if (Array.isArray(data)) {
+            for (let n of data) {
+              if (!n.id) continue;
+              
+              const noteToSave = {
+                id: n.id.toString(),
+                title: n.title || '',
+                content: n.content || '',
+                category: n.category || 'all',
+                starred: n.starred !== undefined ? n.starred : (n.favorite || false),
+                created: n.created || (n.date ? new Date(n.date).getTime() : Date.now()),
+                modified: n.modified || (n.date ? new Date(n.date).getTime() : Date.now())
+              };
+              
+              await saveNoteDB(noteToSave);
+              importedCount++;
+            }
+            if (importedCount > 0) {
+              renderNotes(true);
+              alert(`Successfully imported ${importedCount} notes!`);
+            } else {
+              alert('No valid notes found to import.');
+            }
+          }
+        } catch(err) { alert('Invalid JSON file.'); }
+        e.target.value = '';
       }
 
-      function downloadCurrentNoteAsTXT() {
-        if (!currentNote || !notes[currentNote]) return;
-        const note = notes[currentNote];
-        const suggested = (note.content.split('\n')[0] || 'Untitled').trim().slice(0, 40) || "Untitled";
-        const fn = prompt(`Filename for TXT:`, suggested);
-        if (fn === null) return;
-        const clean = (fn || "Untitled").trim() || "Untitled";
-        const blob = new Blob([note.content || ''], { type: 'text/plain' });
+      function exportJson() {
+        const blob = new Blob([JSON.stringify(notes, null, 2)], { type: 'application/json' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = clean + ".txt";
+        a.download = `NotesBackup_${Date.now()}.json`;
         a.click();
-        URL.revokeObjectURL(a.href);
       }
 
-      document.addEventListener('keydown', (e) => {
-        if (singleNoteView.style.display === 'block') {
-          if (e.ctrlKey && e.key.toLowerCase() === 's') {
-            e.preventDefault();
-            downloadCurrentNoteAsTXT();
-          } else if (e.ctrlKey && e.key.toLowerCase() === 'f') {
-            e.preventDefault();
-            toggleFindBar();
-          }
-        }
-      });
-
-      function setupEventListeners() {
-        categoryFilter.onchange = () => { currentPage = 1; updateNoteList(); renderSingleNoteSidebarList(true); };
-        allNotesTab.onclick = e => { e.preventDefault(); currentCategory = 'all'; allNotesTab.classList.add('active'); favoritesTab.classList.remove('active'); currentPage = 1; updateNoteList(); };
-        favoritesTab.onclick = e => { e.preventDefault(); currentCategory = 'favorites'; favoritesTab.classList.add('active'); allNotesTab.classList.remove('active'); currentPage = 1; updateNoteList(); };
-        sortSelect.onchange = () => { currentPage = 1; updateNoteList(); renderSingleNoteSidebarList(true); };
-
-        searchInput.oninput = () => {
-          clearTimeout(searchTimeout);
-          searchTimeout = setTimeout(() => {
-            currentPage = 1;
-            updateNoteList();
-            if (singleNoteView.style.display === 'block') renderSingleNoteSidebarList(true);
-          }, 250);
-        };
-
-        newNoteBtn.onclick = createNote;
-        sidebarNewNoteBtn.onclick = createNote;
-        exportBtn.onclick = exportNotes;
-        importBtn.onclick = () => importInput.click();
-        importInput.onchange = importNotes;
-
-        importTxtBtn.onclick = () => importTxtInput.click();
-        importTxtInput.onchange = (e) => {
-          const files = e.target.files;
-          if (!files.length) return;
-          let processed = 0;
-          for (let file of files) {
-            const reader = new FileReader();
-            reader.onload = async ev => {
-              try {
-                const text = ev.target.result;
-                const noteId = Date.now().toString() + Math.random().toString(36).substr(2, 5);
-                const title = file.name.replace(/\.[^/.]+$/, "");
-                const note = { 
-                  id: noteId, 
-                  title: title || 'Uploaded Note', 
-                  content: text, 
-                  date: new Date().toISOString(), 
-                  favorite: false, 
-                  category: categories.length ? categories[0] : "all" 
-                };
-                notes[noteId] = note;
-                await saveNoteToDB(note);
-                processed++;
-                if (processed === files.length) {
-                  updateNoteList();
-                  alert('TXT Uploaded successfully!');
-                }
-              } catch (err) {
-                processed++;
-                if (processed === files.length) updateNoteList();
-              }
-            };
-            reader.readAsText(file);
-          }
-        };
-
-        backBtn.onclick = showAllNotes;
-
-        selectAllCheckbox.onchange = () => {
-          if (selectAllCheckbox.checked) filteredNoteIds.forEach(id => selectedNotes.add(id));
-          else selectedNotes.clear();
-          updateNoteList();
-          updateSelectedNotesUI();
-        };
-        downloadSelectedBtn.onclick = downloadSelectedNotesZip;
-        deleteSelectedBtn.onclick = deleteSelectedNotes;
-        categorizeSelectedBtn.onclick = categorizeSelectedNotes;
-
-        noteContent.oninput = () => {
-          if (ignoreInput) return;
-          recordUndoState();
-          clearTimeout(autoSaveTimeout);
-          autoSaveTimeout = setTimeout(saveNote, 280);
-          updateTotalWordCounter();
-          if (findBar.style.display === 'block') highlightAllMatches(false);
-        };
-
-        undoBtn.onclick = undo;
-        redoBtn.onclick = redo;
-        addCategoryBtn.onclick = addCategory;
-        sidebarLoadMoreBtn.onclick = () => { sidebarPage++; renderSingleNoteSidebarList(); };
-        findReplaceBtn.onclick = toggleFindBar;
-        closeFindBar.onclick = toggleFindBar;
-
-        findInput.addEventListener('input', () => highlightAllMatches(false));
-        findInput.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            findNext();
+      async function bulkDownloadZip() {
+        const zip = new JSZip();
+        selectedIds.forEach(id => {
+          const n = notes.find(x => x.id === id);
+          if (n) {
+            const displayTitle = (n.title && n.title.trim()) ? n.title : 
+                                 (n.content && n.content.trim() ? n.content.trim().split(/\s+/).slice(0, 5).join(' ') : 'title');
+            zip.file(`${displayTitle.replace(/[^\w\s-]/gi, '_')}.txt`, n.content || '');
           }
         });
-        caseSensitive.addEventListener('change', () => highlightAllMatches(false));
-        wholeWord.addEventListener('change', () => highlightAllMatches(false));
-        findNextBtn.onclick = findNext;
-        findPrevBtn.onclick = findPrev;
-        replaceBtn.onclick = doReplace;
-        replaceAllBtn.onclick = doReplaceAll;
+        const blob = await zip.generateAsync({ type: 'blob' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `Notes_Selection_${Date.now()}.zip`;
+        a.click();
+        
+        selectedIds.clear();
+        multiSelectMode = false;
+        document.getElementById('selectionBar').classList.remove('active');
+        updateSelectionUI();
       }
 
-      let deferredPrompt = null;
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installButton.classList.remove('d-none');
-      });
-
-      installButton.addEventListener('click', async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          console.log('User accepted the install prompt');
-        }
-        deferredPrompt = null;
-        installButton.classList.add('d-none');
-      });
-
-      window.addEventListener('appinstalled', () => {
-        console.log('PWA was installed');
-        installButton.classList.add('d-none');
-        deferredPrompt = null;
-      });
-
-      function setupOfflineMode() {
-        const baseURL = window.location.href.split('?')[0];
-        const cacheAssets =[
-          baseURL,
-          'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
-          'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css',
-          'https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js',
-          'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
-          'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js',
-          'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
-          'https://www.svgrepo.com/show/192484/notepad-notebook.svg'
-        ];
-        if ('caches' in window) {
-          caches.open('notetake-app-v1').then(cache => {
-            cache.addAll(cacheAssets).catch(() => {});
-          });
-        }
-        if ('serviceWorker' in navigator) {
-          const swCode = `
-            const CACHE_NAME = 'notetake-app-v1';
-            const urlsToCache =[
-              '${baseURL}',
-              'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
-              'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css',
-              'https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js',
-              'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
-              'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js',
-              'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
-              'https://www.svgrepo.com/show/192484/notepad-notebook.svg'
-            ];
-            self.addEventListener('install', event => {
-              self.skipWaiting();
-              event.waitUntil(
-                caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
-              );
-            });
-            self.addEventListener('activate', event => {
-              event.waitUntil(
-                caches.keys().then(cacheNames => {
-                  return Promise.all(
-                    cacheNames.map(cacheName => {
-                      if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
-                      }
-                    })
-                  );
-                }).then(() => self.clients.claim())
-              );
-            });
-            self.addEventListener('fetch', event => {
-              if (event.request.method !== 'GET') return;
-              event.respondWith(
-                caches.match(event.request).then(response => {
-                  if (response) return response;
-                  return fetch(event.request).then(fetchRes => {
-                    return caches.open(CACHE_NAME).then(cache => {
-                      cache.put(event.request, fetchRes.clone());
-                      return fetchRes;
-                    });
-                  }).catch(() => {
-                    if (event.request.mode === 'navigate') {
-                      return caches.match('${baseURL}');
-                    }
-                  });
-                })
-              );
-            });
-          `;
-          const blob = new Blob([swCode], { type: 'application/javascript' });
-          const blobUrl = URL.createObjectURL(blob);
-          navigator.serviceWorker.register(blobUrl).then(reg => {
-            console.log('Dynamic single-file ServiceWorker registered successfully for offline capabilities.');
-          }).catch(err => {
-            navigator.serviceWorker.register('./sw.js').catch(() => console.log('Offline SW caching active via main thread.'));
-          });
-        }
+      function downloadEditorNote() {
+        const html = `
+          <div style="position: relative; display: flex; align-items: center;">
+            <select id="dlFormat" class="modal-input" style="appearance: none; -webkit-appearance: none; padding-right: 48px; background: transparent; z-index: 1;">
+              <option value="txt" style="margin-left: 1rem;">Plain Text (.txt)</option>
+              <option value="pdf" style="margin-left: 1rem;">PDF Document (.pdf)</option>
+            </select>
+            <svg class="icon" viewBox="0 0 24 24" style="position: absolute; right: 16px; pointer-events: none; width: 22px; height: 22px; color: var(--md-sys-color-outline);"><use href="#icon-chevron-down"></use></svg>
+          </div>
+        `;
+        showModal('Download Note', html, [
+          { label: 'Cancel', filled: false, onclick: () => {} },
+          { label: 'Download', filled: true, onclick: () => {
+              const format = document.getElementById('dlFormat').value;
+              const displayTitle = (activeNote.title && activeNote.title.trim()) ? activeNote.title : 
+                                   (activeNote.content && activeNote.content.trim() ? activeNote.content.trim().split(/\s+/).slice(0, 5).join(' ') : 'title');
+              const title = displayTitle.replace(/[^\w\s-]/gi, '_');
+              
+              if (format === 'txt') {
+                const blob = new Blob([activeNote.content], { type: 'text/plain' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = title + '.txt';
+                a.click();
+              } else if (format === 'pdf') {
+                const div = document.createElement('div');
+                div.style.padding = '30px';
+                div.style.fontFamily = 'Inter, sans-serif';
+                div.innerHTML = `<h1 style="margin-bottom:10px;">${escapeHTML(displayTitle)}</h1><hr style="border:none; border-bottom:1px solid #ccc; margin-bottom: 20px;"><div style="white-space:pre-wrap; line-height: 1.6; font-size: 14px;">${escapeHTML(activeNote.content)}</div>`;
+                html2pdf().from(div).save(title + '.pdf');
+              }
+            } 
+          }
+        ]);
       }
 
-      function injectManifest() {
-        const manifest = {
-          name: "NoteTakeApp",
-          short_name: "NoteApp",
-          start_url: window.location.href.split('?')[0],
-          display: "standalone",
-          background_color: "transparent",
-          theme_color: "#0d6efd",
-          icons:[
-            {
-              src: "https://www.svgrepo.com/show/192484/notepad-notebook.svg",
-              sizes: "any",
-              type: "image/svg+xml",
-              purpose: "any"
-            },
-            {
-              src: "https://www.svgrepo.com/show/192484/notepad-notebook.svg",
-              sizes: "512x512",
-              type: "image/svg+xml",
-              purpose: "any"
-            }
-          ]
+      window.toggleSidebar = function(force) {
+        const sb = document.getElementById('sidebar');
+        sb.classList.toggle('open', force);
+      };
+
+      function setupEvents() {
+        document.querySelectorAll('.sidebar .drawer-item[data-filter]').forEach(el => {
+          el.onclick = () => setFilter(el.dataset.filter);
+        });
+
+        const themeBtnSide = document.getElementById('themeToggleBtnSide');
+        const themeIconSide = document.getElementById('themeIconSide');
+        const setTheme = (isDark) => {
+          document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+          themeIconSide.innerHTML = `<use href="${isDark ? '#icon-light' : '#icon-dark'}"></use>`;
         };
-        const stringManifest = JSON.stringify(manifest);
-        const blob = new Blob([stringManifest], { type: 'application/manifest+json' });
-        const manifestURL = URL.createObjectURL(blob);
-        let link = document.createElement('link');
-        link.rel = 'manifest';
-        link.href = manifestURL;
-        document.head.appendChild(link);
+        themeBtnSide.onclick = () => {
+          const current = document.documentElement.getAttribute('data-theme');
+          setTheme(current === 'light');
+        };
+
+        document.getElementById('menuToggleBtn').onclick = () => toggleSidebar(true);
+        document.getElementById('closeSidebarBtn').onclick = () => toggleSidebar(false);
+
+        document.getElementById('searchInput').addEventListener('input', () => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => renderNotes(true), 300);
+        });
+
+        document.getElementById('notesView').addEventListener('scroll', (e) => {
+          const view = e.target;
+          if (view.scrollTop + view.clientHeight >= view.scrollHeight - 50) {
+            if (renderPage * pageSize < currentFilteredNotes.length) {
+              renderPage++;
+              renderNotes(false);
+            }
+          }
+        });
+
+        document.getElementById('sortSelect').addEventListener('change', (e) => {
+          sortBy = e.target.value;
+          renderNotes();
+        });
+
+        document.getElementById('newNoteFab').onclick = async () => {
+          const id = 'note_' + Date.now();
+          const newNote = {
+            id, title: '', content: '',
+            category: activeFilter !== 'all' && activeFilter !== 'starred' ? activeFilter : 'all',
+            starred: false, created: Date.now(), modified: Date.now()
+          };
+          await saveNoteDB(newNote);
+          renderNotes(true);
+          openEditor(newNote);
+        };
+
+        document.getElementById('closeEditorBtn').onclick = closeEditor;
+        document.getElementById('editorStarBtn').onclick = () => {
+          if(activeNote) {
+            activeNote.starred = !activeNote.starred;
+            updateEditorStar();
+            saveCurrentNote();
+          }
+        };
+
+        document.getElementById('editorMoreBtn').onclick = (e) => {
+          e.stopPropagation();
+          document.getElementById('editorMoreMenu').classList.toggle('active');
+        };
+
+        document.addEventListener('click', (e) => {
+          const menu = document.getElementById('editorMoreMenu');
+          if (menu && menu.classList.contains('active') && !e.target.closest('#editorDropdown')) {
+            menu.classList.remove('active');
+          }
+        });
+
+        document.getElementById('editorUndoBtn').onclick = () => {
+          document.getElementById('editorMoreMenu').classList.remove('active');
+          doUndo();
+        };
+
+        document.getElementById('editorRedoBtn').onclick = () => {
+          document.getElementById('editorMoreMenu').classList.remove('active');
+          doRedo();
+        };
+
+        document.getElementById('editorFullscreenBtn').onclick = () => {
+          document.getElementById('editorMoreMenu').classList.remove('active');
+          toggleFullscreen();
+        };
+
+        document.getElementById('editorDownloadBtn').onclick = () => {
+          document.getElementById('editorMoreMenu').classList.remove('active');
+          downloadEditorNote();
+        };
+
+        document.getElementById('editorDeleteBtn').onclick = () => {
+          document.getElementById('editorMoreMenu').classList.remove('active');
+          showModal('Delete Note?', 'This action cannot be undone.', [
+            { label: 'Cancel', filled: false, onclick: () => {} },
+            { label: 'Delete', filled: true, onclick: async () => {
+              if (activeNote) await deleteNoteDB(activeNote.id);
+              document.getElementById('editorOverlay').classList.remove('active');
+              activeNote = null;
+              renderNotes();
+            }}
+          ]);
+        };
+
+        document.getElementById('editorFindBtn').onclick = toggleFindReplace;
+        document.getElementById('findInput').oninput = executeFind;
+        document.getElementById('findNextBtn').onclick = () => navFind(1);
+        document.getElementById('findPrevBtn').onclick = () => navFind(-1);
+        document.getElementById('replaceBtn').onclick = execReplace;
+        document.getElementById('replaceAllBtn').onclick = execReplaceAll;
+
+        document.getElementById('manageCatsBtn').onclick = manageCategories;
+
+        document.getElementById('importTxtBtn').onclick = () => document.getElementById('fileImportTxt').click();
+        document.getElementById('fileImportTxt').onchange = handleTxtImport;
+        
+        document.getElementById('importJsonBtn').onclick = () => document.getElementById('fileImportJson').click();
+        document.getElementById('fileImportJson').onchange = handleJsonImport;
+        
+        document.getElementById('exportJsonBtn').onclick = exportJson;
+
+        document.getElementById('toggleSelectAllBtn').onclick = () => {
+          const allSelected = currentFilteredNotes.length > 0 && currentFilteredNotes.every(n => selectedIds.has(n.id));
+          
+          if (allSelected) {
+            currentFilteredNotes.forEach(n => selectedIds.delete(n.id));
+            if (selectedIds.size === 0) {
+              multiSelectMode = false;
+              document.getElementById('selectionBar').classList.remove('active');
+            }
+          } else {
+            currentFilteredNotes.forEach(n => selectedIds.add(n.id));
+          }
+          updateSelectionUI();
+        };
+
+        document.getElementById('cancelSelectBtn').onclick = () => {
+          multiSelectMode = false; selectedIds.clear();
+          document.getElementById('selectionBar').classList.remove('active');
+          updateSelectionUI();
+        };
+
+        document.getElementById('bulkDeleteBtn').onclick = () => {
+          showModal('Delete Selected?', `Delete ${selectedIds.size} notes permanently?`, [
+            { label: 'Cancel', filled: false, onclick: () => {} },
+            { label: 'Delete', filled: true, onclick: async () => {
+              for (let id of selectedIds) await deleteNoteDB(id);
+              selectedIds.clear(); multiSelectMode = false;
+              document.getElementById('selectionBar').classList.remove('active');
+              renderNotes();
+            }}
+          ]);
+        };
+        document.getElementById('bulkDownloadBtn').onclick = bulkDownloadZip;
       }
 
-      async function init() {
-        await loadNotes();
-        renderCategoryFilterDropdown();
-        renderNoteCategoryDropdown("all");
-        updateNoteList();
-        setupEventListeners();
-        injectManifest();
-        setupOfflineMode();
+      function escapeHTML(str) {
+        return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
       }
 
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-      } else {
-        init();
+      function setupPWA() {
+        const manifest = {
+          name: "Material Note Pro",
+          short_name: "NotePro",
+          start_url: location.href.split('?')[0],
+          display: "standalone",
+          background_color: "#131314",
+          theme_color: "#131314",
+          icons: [{
+            src: "https://www.svgrepo.com/show/192484/notepad-notebook.svg",
+            sizes: "192x192",
+            type: "image/svg+xml",
+            purpose: "any maskable"
+          }]
+        };
+        document.getElementById('manifest-link').href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+        });
+
+        document.getElementById('installAppBtn').onclick = async () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+              document.getElementById('installAppBtn').style.display = 'none';
+            }
+            deferredPrompt = null;
+          } else {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            let instructions = 'To install this app on your device:<br><br>';
+            if (isIOS) {
+              instructions += '1. Tap the <strong>Share</strong> button at the bottom of Safari.<br>2. Scroll down and tap <strong>Add to Home Screen</strong>.';
+            } else {
+              instructions += '1. Click the browser\'s <strong>Menu</strong> icon (three dots) in the top-right corner.<br>2. Select <strong>Save page as app</strong>, <strong>Install</strong>, or <strong>Add to Home Screen</strong>.';
+            }
+            showModal('Install App', instructions, [{ label: 'Got It', filled: true, onclick: () => {} }]);
+          }
+        };
+
+        const swCode = `
+          const CACHE_NAME = 'notepro-v1';
+          self.addEventListener('install', e => self.skipWaiting());
+          self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+          self.addEventListener('fetch', e => {
+            e.respondWith(caches.match(e.request).then(res => res || fetch(e.request).catch(() => new Response('Offline'))));
+          });
+        `;
+        const blob = new Blob([swCode], { type: 'application/javascript' });
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(e => console.log('Blob SW blocked by strict security policy.'));
+        }
       }
+
+      window.onload = async () => {
+        setupEvents();
+        await initDB();
+        await loadData();
+        renderSidebar();
+        renderNotes(true);
+        setupPWA();
+      };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
   </body>
 </html>
