@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
   <head>
@@ -107,7 +108,7 @@
       }
 
       .sidebar {
-        width: 300px;
+        max-width: 300px;
         background-color: var(--md-sys-color-surface-container-low);
         display: flex;
         flex-direction: column;
@@ -117,20 +118,10 @@
       }
 
       .sidebar-header {
-        padding: 24px 16px 16px 24px;
+        padding: 16px 16px 0 16px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-      }
-
-      .app-title {
-        font-size: 1.35rem;
-        font-weight: 700;
-        color: var(--md-sys-color-primary);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        letter-spacing: -0.5px;
       }
 
       #closeSidebarBtn {
@@ -760,9 +751,9 @@
       }
 
       @media (max-width: 768px) {
-        .sidebar { position: absolute; left: -100%; height: 100%; box-shadow: 4px 0 16px var(--md-sys-color-shadow); }
+        .sidebar { position: absolute; left: -100%; max-width: 300px; height: 100%; box-shadow: 4px 0 16px var(--md-sys-color-shadow); }
         .sidebar.open { left: 0; }
-        #closeSidebarBtn { display: inline-flex; }
+        #closeSidebarBtn { display: inline-flex; margin-bottom: 5%;}
         .notes-grid { grid-template-columns: 1fr; }
         .editor-body { padding: 20px 24px; }
         .find-replace-panel { width: 90%; left: 5%; right: 5%; top: 70px; }
@@ -806,7 +797,6 @@
     <div class="app-container">
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-          <div class="app-title">NoteTakeApp</div>
           <button class="icon-btn" id="closeSidebarBtn">
             <svg class="icon" viewBox="0 0 24 24"><use href="#icon-close"></use></svg>
           </button>
@@ -825,7 +815,7 @@
             <svg class="icon" viewBox="0 0 24 24"><use href="#icon-folder"></use></svg> All Notes
           </li>
           <li class="drawer-item" data-filter="starred">
-            Starred
+            <svg class="icon" viewBox="0 0 24 24"><use href="#icon-star"></use></svg> Starred
           </li>
 
           <div class="drawer-section-header">
@@ -1237,7 +1227,7 @@
       function updateEditorStar() {
         const useId = activeNote && activeNote.starred ? '#icon-star' : '#icon-star-border';
         document.getElementById('editorStarIcon').innerHTML = `<use href="${useId}"></use>`;
-        document.getElementById('editorStarBtn').style.color = activeNote && activeNote.starred ? '#f5b041' : '';
+        document.getElementById('editorStarBtn').style.color = activeNote && activeNote.starred ? '#ffffff' : '';
       }
 
       function closeEditor() {
@@ -1452,24 +1442,27 @@
       function closeModal() { document.getElementById('modalBackdrop').classList.remove('active'); }
 
       function manageCategories() {
-        let html = `<div class="cat-manage-list">`;
-        categories.forEach(c => {
-          html += `<div class="cat-manage-item">
-            <span style="font-weight: 500;">${escapeHTML(c.name)}</span>
-            <div style="display: flex; gap: 4px;">
-              <button class="icon-btn" onclick="renameCat('${c.id}')"><svg class="icon" viewBox="0 0 24 24"><use href="#icon-pencil"></use></svg></button>
-              <button class="icon-btn" onclick="deleteCat('${c.id}')" style="color:var(--md-sys-color-error)"><svg class="icon" viewBox="0 0 24 24"><use href="#icon-delete"></use></svg></button>
-            </div>
-          </div>`;
-        });
-        html += `</div>
-        <div style="margin-top:20px; display:flex; gap:12px;">
-          <input type="text" id="newCatInput" class="modal-input" placeholder="New Category" />
-          <button class="btn btn-filled" onclick="addCat()">Add</button>
+      let html = `<div class="cat-manage-list">`;
+      categories.forEach(c => {
+        html += `<div class="cat-manage-item">
+          <span style="font-weight: 500;">${escapeHTML(c.name)}</span>
+          <div style="display: flex; gap: 4px;">
+            <button class="icon-btn" onclick="renameCat('${c.id}')"><svg class="icon" viewBox="0 0 24 24"><use href="#icon-pencil"></use></svg></button>
+            <button class="icon-btn" onclick="deleteCat('${c.id}')" style="color:var(--md-sys-color-error)"><svg class="icon" viewBox="0 0 24 24"><use href="#icon-delete"></use></svg></button>
+          </div>
         </div>`;
-        
-        showModal('Manage Categories', html, [{ label: 'Done', filled: true, onclick: () => renderSidebar() }]);
-      }
+      });
+      html += `</div>
+        <div style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap;">
+          <input type="text" id="newCatInput" class="modal-input" placeholder="New Category" style="flex:1;" />
+          <button class="btn btn-filled" onclick="addCat()">Add</button>
+          <button class="btn btn-text" onclick="restoreDefaultCategories()" style="flex:0 0 auto;">Restore Defaults</button>
+        </div>`;
+      
+      showModal('Manage Categories', html, [
+        { label: 'Done', filled: true, onclick: () => renderSidebar() }
+      ]);
+}
 
       window.addCat = async function() {
         const val = document.getElementById('newCatInput').value.trim();
@@ -1797,10 +1790,39 @@
         return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
       }
 
+      document.addEventListener('fullscreenchange', () => {
+        const btn = document.getElementById('editorFullscreenBtn');
+        if (document.fullscreenElement) {
+          btn.innerHTML = `<svg class="icon" viewBox="0 0 24 24"><use href="#icon-fullscreen"></use></svg> Exit`;
+        } else {
+          btn.innerHTML = `<svg class="icon" viewBox="0 0 24 24"><use href="#icon-fullscreen"></use></svg> Full Screen`;
+        }
+      });
+
+      window.restoreDefaultCategories = async function() {
+        const defaults = ['Personal', 'Work', 'Ideas'];
+        let added = 0;
+        for (let name of defaults) {
+          if (!categories.find(c => c.name.toLowerCase() === name.toLowerCase())) {
+            const id = 'cat_' + Date.now() + Math.random().toString(36).substr(2);
+            const obj = { id, name };
+            await txPromise('categories', 'readwrite', s => s.put(obj));
+            categories.push(obj);
+            added++;
+          }
+        }
+        if (added) {
+          renderSidebar();
+          manageCategories();
+        } else {
+          alert('All default categories already exist.');
+        }
+      };
+
       function setupPWA() {
         const manifest = {
-          name: "Material Note Pro",
-          short_name: "NotePro",
+          name: "NoteTakeApp",
+          short_name: "NoteTake",
           start_url: location.href.split('?')[0],
           display: "standalone",
           background_color: "#131314",
