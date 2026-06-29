@@ -1037,13 +1037,16 @@
       async function loadData() {
         notes = await txPromise('notes', 'readonly', s => s.getAll());
         categories = await txPromise('categories', 'readonly', s => s.getAll());
-        if (categories.length === 0) {
+        if (!localStorage.getItem('notepro_seeded_cats')) {
           const defaultCats = ['Personal', 'Work', 'Ideas'];
           for (let c of defaultCats) {
-            const catObj = { id: c, name: c };
-            await txPromise('categories', 'readwrite', s => s.put(catObj));
-            categories.push(catObj);
+            if (!categories.some(cat => cat.id === c)) {
+              const catObj = { id: c, name: c };
+              await txPromise('categories', 'readwrite', s => s.put(catObj));
+              categories.push(catObj);
+            }
           }
+          localStorage.setItem('notepro_seeded_cats', 'true');
         }
       }
 
