@@ -840,6 +840,9 @@
           <li class="drawer-item" id="exportJsonBtn">
             <svg class="icon" viewBox="0 0 24 24"><use href="#icon-download"></use></svg> Export JSON
           </li>
+          <li class="drawer-item" id="deleteCookieBtn" style="color: var(--md-sys-color-error);">
+            <svg class="icon" viewBox="0 0 24 24"><use href="#icon-delete"></use></svg> Delete Data
+          </li>
           <li class="drawer-item" id="installAppBtn" style="display: flex;">
             <svg class="icon" viewBox="0 0 24 24"><use href="#icon-download"></use></svg> Install App
           </li>
@@ -1787,6 +1790,38 @@
         document.getElementById('fileImportJson').onchange = handleJsonImport;
         
         document.getElementById('exportJsonBtn').onclick = exportJson;
+
+        document.getElementById('deleteCookieBtn').onclick = () => {
+          showModal('Delete All Data?', 'Are you sure you want to delete all cookies AND all notes? This cannot be undone!', [
+            { label: 'Cancel', filled: false, onclick: () => {} },
+            { label: 'Delete All', filled: true, onclick: async () => {
+              // 1. Delete all cookies
+              const cookies = document.cookie.split(";");
+              for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i];
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+              }
+              
+              // 2. Clear all notes from IndexedDB
+              await txPromise('notes', 'readwrite', s => s.clear());
+              notes = []; // Empty the in-memory array
+              
+              // 3. Reset UI states
+              selectedIds.clear();
+              multiSelectMode = false;
+              document.getElementById('selectionBar').classList.remove('active');
+              renderNotes(true); // Re-render the empty grid
+              
+              setTimeout(() => {
+                showModal('Success', 'Cookies and all notes have been successfully deleted.', [
+                  { label: 'OK', filled: true, onclick: () => toggleSidebar(false) }
+                ]);
+              }, 300);
+            }}
+          ]);
+        };
 
         document.getElementById('toggleSelectAllBtn').onclick = () => {
           const allSelected = currentFilteredNotes.length > 0 && currentFilteredNotes.every(n => selectedIds.has(n.id));
